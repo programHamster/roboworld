@@ -12,16 +12,18 @@ public abstract class AbstractRobot implements Robot {
     private TaskBoard tasks = new TaskBoard();
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition condition = lock.newCondition();
+    private boolean isAlive = true;
 
     // lifecycle of robot
     public final void run(){
         try {
             activation();
-            while(!isDead()){
+            while(!isDie()){
                 work();
             }
         } finally {
             shutdown();
+            isAlive = false;
         }
     }
 
@@ -45,7 +47,7 @@ public abstract class AbstractRobot implements Robot {
     }
 
     public final void addTask(Task task){
-        if(tasks != null && !isDead()){
+        if(tasks != null && !isDie()){
             tasks.addTask(task);
         } else {
             throw new RobotDeadException("the robot is already dead");
@@ -53,7 +55,7 @@ public abstract class AbstractRobot implements Robot {
     }
 
     protected final Task getTask(){
-        if(isDead()){
+        if(isDie()){
             throw new RobotDeadException();
         }
         return tasks.getTask();
@@ -78,8 +80,18 @@ public abstract class AbstractRobot implements Robot {
         }
     }
 
-    protected static boolean isDead(){
+    /**
+     * Returns <code>true</code> if the robot was ordered to die, but he did not have time to do it
+     *
+     * @return <code>true</code> if the robot was to kill himself;
+     *          <code>false</code> otherwise.
+     */
+    protected static boolean isDie(){
         return Thread.currentThread().isInterrupted();
+    }
+
+    public final boolean isAlive(){
+        return isAlive;
     }
 
 }

@@ -2,23 +2,20 @@ package org.jazzteam.roboworld.model.bean.robot;
 
 import org.jazzteam.roboworld.model.bean.TaskBoard;
 import org.jazzteam.roboworld.model.bean.task.Task;
-import org.jazzteam.roboworld.model.exception.RobotDeadException;
 
 public class DocileRobot extends AbstractRobot {
 
     @Override
     protected void work(){
-        String robotName = Thread.currentThread().getName();
-        try {
-            Task task;
-            while((task = getTask()) != null){
-                System.out.println("The robot \"" + robotName + "\" is doing the task " + task.getId());
-                task.perform();
+        Task task;
+        while((task = getTask()) != null){
+            System.out.println("The robot \"" + Thread.currentThread().getName() + "\" is doing the task " + task.getId());
+            task.perform();
+            if(isDie()){
+                return;
             }
-            takeCommonTask();
-        } catch (RobotDeadException e) {
-            System.out.println("The robot \"" + robotName + "\" is dead.");
         }
+        takeCommonTask();
     }
 
     private void takeCommonTask(){
@@ -28,6 +25,12 @@ public class DocileRobot extends AbstractRobot {
         } else{
             await();
         }
+    }
+
+    @Override
+    protected void shutdown(){
+        super.shutdown();
+        System.out.println("The robot \"" + Thread.currentThread().getName() + "\" is dead.");
     }
 
 }
