@@ -1,13 +1,37 @@
 package org.jazzteam.roboworld.model.exception;
 
-public class RobotAlreadyExistException extends Exception {
-    private String name;
+import org.jazzteam.roboworld.model.bean.robot.Robot;
 
-    public RobotAlreadyExistException(String name) {
-        this.name = name;
+public class RobotAlreadyExistException extends Exception {
+    private Robot robot;
+
+    public RobotAlreadyExistException() {
+        super();
+    }
+    public RobotAlreadyExistException(String message) {
+        super(message);
+    }
+    public RobotAlreadyExistException(String message, Throwable cause) {
+        super(message, cause);
+    }
+    public RobotAlreadyExistException(Throwable cause) {
+        super(cause);
+    }
+    protected RobotAlreadyExistException(String message, Throwable cause,
+                                          boolean enableSuppression,
+                                          boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+
+    public RobotAlreadyExistException(Robot robot) {
+        this.robot = robot;
+    }
+    public RobotAlreadyExistException(Robot robot, Throwable cause) {
+        this(cause);
+        this.robot = robot;
     }
 
     public String getMessage(){
-        return "The robot named \"" + name + "\" already exists.";
+        return "The robot named \"" + robot.getName() + "\" already exists.";
     }
 }
