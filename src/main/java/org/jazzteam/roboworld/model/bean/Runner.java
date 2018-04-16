@@ -1,7 +1,7 @@
 package org.jazzteam.roboworld.model.bean;
 
+import org.jazzteam.roboworld.model.bean.operator.MonitoringPerformanceOperator;
 import org.jazzteam.roboworld.model.bean.operator.Operator;
-import org.jazzteam.roboworld.model.bean.operator.OperatorRecreater;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.model.bean.task.generalTask.DieTask;
@@ -16,7 +16,7 @@ import org.jazzteam.roboworld.model.facroty.RobotType;
 
 public class Runner {
     public static void main(String[] args) {
-        Operator operator = new OperatorRecreater();
+        Operator operator = new MonitoringPerformanceOperator(5000);
         Robot beRobot = null;
         Robot feRobot = null;
         Robot hrRobot = null;
@@ -47,8 +47,13 @@ public class Runner {
             Thread.sleep(10000);
             operator.assignTask(be, beRobot);
             operator.broadcastTask(be2, RobotType.BACK_END_DEVELOPER);
+            for (int i=0; i<10; i++) {
+                operator.broadcastTask(be, RobotType.BACK_END_DEVELOPER);
+            }
         } catch (RobotNotFoundException | RobotDeadException | InterruptedException e) {
             e.printStackTrace();
         }
+
+
     }
 }

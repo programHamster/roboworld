@@ -23,6 +23,10 @@ public class TaskBoard<T extends Task> implements Board<T> {
         return tasks.peek();
     }
 
+    public int size(){
+        return tasks.size();
+    }
+
     private static void checkTask(Task task){
         if(task == null){
             throw new TaskIsNullException();

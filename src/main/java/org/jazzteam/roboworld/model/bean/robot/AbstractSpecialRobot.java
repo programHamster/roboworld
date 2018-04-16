@@ -7,7 +7,7 @@ import org.jazzteam.roboworld.model.exception.RobotDeadException;
 import org.jazzteam.roboworld.model.exception.TaskIsNullException;
 import org.jazzteam.roboworld.model.exception.TaskNotFeasibleException;
 
-public abstract class AbstractSpecialRobot extends GeneralRobot implements SpecialRobot {
+public abstract class AbstractSpecialRobot extends AbstractRobot implements SpecialRobot {
 
     public void addTask(Task task) throws RobotDeadException{
         if(task == null){

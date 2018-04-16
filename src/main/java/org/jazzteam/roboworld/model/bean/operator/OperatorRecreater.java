@@ -2,12 +2,13 @@ package org.jazzteam.roboworld.model.bean.operator;
 
 import org.jazzteam.roboworld.model.bean.board.SharedBoard;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
-import org.jazzteam.roboworld.model.bean.robot.SpecialRobot;
 import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.model.exception.RobotAlreadyExistException;
 import org.jazzteam.roboworld.model.exception.RobotDeadException;
 import org.jazzteam.roboworld.model.exception.RobotNotFoundException;
 import org.jazzteam.roboworld.model.facroty.RobotType;
+
+import java.util.UUID;
 
 public class OperatorRecreater extends AbstractOperator {
     private boolean recreate = true;
@@ -31,8 +32,15 @@ public class OperatorRecreater extends AbstractOperator {
         return createRobot(type, name, false);
     }
 
-    public Robot createRobot(RobotType type) throws RobotAlreadyExistException{
-        return createRobot(type, null, false);
+    public Robot createRobot(RobotType type) {
+        Robot robot;
+        try {
+            robot = createRobot(type, getRandomName(), false);
+        } catch (RobotAlreadyExistException e) {
+            // if the names matched try again
+            robot = createRobot(type);
+        }
+        return robot;
     }
 
     private Robot createRobot(RobotType type, String name, boolean withReplacement) throws RobotAlreadyExistException{
@@ -59,7 +67,7 @@ public class OperatorRecreater extends AbstractOperator {
             } catch(RobotDeadException e){
                 if(recreate){
                     try {
-                        recreateRobot(robot);
+                        createRobot(robot.getRobotType(), robot.getName(), true);
                     } catch (RobotAlreadyExistException e1) {
                         // never happen
                     }
@@ -95,7 +103,7 @@ public class OperatorRecreater extends AbstractOperator {
         try{
             if(recreate && robot.isDie()){
                 try{
-                    robot = recreateRobot(robot);
+                    robot = createRobot(robot.getRobotType(), robot.getName(), true);
                     System.out.println(robot.getName() + " is recreated");
                 } catch(RobotAlreadyExistException e){
                     // never happen
@@ -108,14 +116,12 @@ public class OperatorRecreater extends AbstractOperator {
         }
     }
 
-    private Robot recreateRobot(Robot robot) throws RobotAlreadyExistException{
-        Robot newRobot;
-        if(robot instanceof SpecialRobot){
-            newRobot = createRobot(((SpecialRobot) robot).getRobotType(), robot.getName(), true);
-        } else {
-            newRobot = createRobot(RobotType.GENERAL, robot.getName(), true);
-        }
-        return newRobot;
+    private static String getRandomName(){
+        // max length is 36
+        final int LENGTH_NAME = 5;
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+        String shortUuid = uuid.substring(0, LENGTH_NAME);
+        return shortUuid;
     }
 
 }
