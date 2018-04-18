@@ -5,12 +5,14 @@ import org.jazzteam.roboworld.model.bean.operator.Operator;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.model.bean.task.TaskHolder;
-import org.jazzteam.roboworld.model.exception.TaskNotFoundException;
-import org.jazzteam.roboworld.model.exception.unsupported.UnsupportedException;
-import org.jazzteam.roboworld.model.facroty.OutputFactory;
+import org.jazzteam.roboworld.exception.TaskIsNullException;
+import org.jazzteam.roboworld.exception.TaskNotFoundException;
+import org.jazzteam.roboworld.exception.unsupported.UnsupportedException;
+import org.jazzteam.roboworld.output.OutputWriter;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 import org.jazzteam.roboworld.model.facroty.RobotTypeFactory;
 import org.jazzteam.roboworld.model.facroty.TaskFactory;
+import org.jazzteam.roboworld.output.RoboWorldEvent;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,7 +27,7 @@ public enum Command {
             } else {
                 robot = operator.createRobot(robotType, robotName);
             }
-            OutputFactory.println("Robot \"" + robot.getName() + "\" created");
+            OutputWriter.write("Robot \"" + robot.getName() + "\" created", RoboWorldEvent.ROBOT);
         }
     }, CREATE_TASK{
         public void execute(HttpServletRequest request, Operator operator) throws UnsupportedException{
@@ -33,24 +35,25 @@ public enum Command {
             String taskName = request.getParameter(Constants.PARAM_NAME_TASK_NAME);
             Task task = TaskFactory.getTaskFromFactory(taskTypeName, taskName);
             TaskHolder.getInstance().putTask(task);
-            OutputFactory.println("Task \"" + task.getName() + "\" created");
+            OutputWriter.write("Task \"" + task.getName() + "\" created", RoboWorldEvent.TASK);
         }
     }, GIVE_TASK{
         public void execute(HttpServletRequest request, Operator operator) throws UnsupportedException{
-            RobotType robotType = getRobotType(request);
             String taskName = request.getParameter(Constants.PARAM_NAME_TASK_NAME);
-            Task task = TaskHolder.getInstance().getTask(taskName, robotType);
-            if(task == null){
-                throw new TaskNotFoundException(taskName, " or type is wrong");
-            }
-            String robotName = null;
-            if(getCheckbox(request, Constants.PARAM_NAME_CHECKBOX)){
-                robotName = request.getParameter(Constants.PARAM_NAME_ROBOT_NAME);
-            }
-            if(robotName != null && !(robotName = robotName.trim()).isEmpty()){
-                operator.assignTask(task, robotName);
-            } else {
-                operator.broadcastTask(task, robotType);
+            Task task;
+            try {
+                if(getCheckbox(request, Constants.PARAM_NAME_CHECKBOX)){
+                    String robotName = request.getParameter(Constants.PARAM_NAME_ROBOT_NAME);
+                    Robot robot = operator.get(robotName);
+                    task = TaskHolder.getInstance().getTask(taskName, robot.getRobotType());
+                    operator.assignTask(task, robotName);
+                } else {
+                    RobotType robotType = getRobotType(request);
+                    task = TaskHolder.getInstance().getTask(taskName, robotType);
+                    operator.broadcastTask(task, robotType);
+                }
+            } catch (TaskIsNullException e) {
+                throw new TaskNotFoundException(taskName, " or robot type is wrong");
             }
         }
     };

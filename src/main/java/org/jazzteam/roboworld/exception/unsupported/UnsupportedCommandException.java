@@ -1,4 +1,4 @@
-package org.jazzteam.roboworld.model.exception.unsupported;
+package org.jazzteam.roboworld.exception.unsupported;
 
 public class UnsupportedCommandException extends UnsupportedException {
     public UnsupportedCommandException() {

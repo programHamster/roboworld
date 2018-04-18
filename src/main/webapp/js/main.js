@@ -146,7 +146,6 @@ var INPUT_TYPE_TEXT = 'input[type="text"]';
 
 function createRobotOrTask(name) {
     var form;
-
     switch(name){
         case TASK:
             form = document.forms[CREATE_TASK_FORM_ID];
@@ -163,14 +162,6 @@ function createRobotOrTask(name) {
         if(this.readyState !== 4) return;
         if(this.status === 200){
             hideErrorMessage(form);
-            switch(name){
-                case TASK:
-                    init(NEED_TASKS);
-                    break;
-                case ROBOT:
-                    init(NEED_ROBOTS);
-                    break;
-            }
         } else {
             showErrorMessage(this, form);
         }
@@ -234,6 +225,7 @@ var WEB_CTX = PATH.substring(0, PATH.indexOf('/', 1));
 var END_POINT_URL = "ws://" + HOST + WEB_CTX + "/chat";
 var ID_MESSAGE_BLOCK = "messagesBlock";
 var MESSAGES_BLOCK;
+var KEY_DELIMITER = ':';
 
 var chatClient = null;
 
@@ -241,7 +233,8 @@ function connect () {
     chatClient = new WebSocket(END_POINT_URL);
     MESSAGES_BLOCK = document.getElementById(ID_MESSAGE_BLOCK);
     chatClient.onmessage = function (event) {
-        showMessage(event.data);
+        var message = extractKey(event.data);
+        showMessage(message);
     };
 
     chatClient.onerror = function (event) {
@@ -251,6 +244,28 @@ function connect () {
 
 function disconnect () {
     chatClient.close();
+}
+
+function extractKey(message){
+    var indexColon = message.indexOf(KEY_DELIMITER);
+    if(indexColon > 0){
+        var key = message.substring(0, indexColon);
+        var confirmation = false;
+        switch(key){
+            case ROBOT:
+                init(NEED_ROBOTS);
+                confirmation = true;
+                break;
+            case TASK:
+                init(NEED_TASKS);
+                confirmation = true;
+                break;
+        }
+        if(confirmation){
+            message = message.substring(indexColon + 1);
+        }
+    }
+    return message;
 }
 
 function showMessage(message, isError) {

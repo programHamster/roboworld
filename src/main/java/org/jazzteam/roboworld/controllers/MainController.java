@@ -5,10 +5,10 @@ import org.jazzteam.roboworld.Constants;
 import org.jazzteam.roboworld.command.Command;
 import org.jazzteam.roboworld.model.bean.operator.Operator;
 import org.jazzteam.roboworld.model.bean.task.TaskHolder;
-import org.jazzteam.roboworld.model.exception.unsupported.UnsupportedException;
+import org.jazzteam.roboworld.exception.unsupported.UnsupportedException;
 import org.jazzteam.roboworld.model.facroty.CommandFactory;
 import org.jazzteam.roboworld.model.facroty.OperatorFactory;
-import org.jazzteam.roboworld.model.facroty.OutputFactory;
+import org.jazzteam.roboworld.output.OutputWriter;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.annotation.WebInitParam;
@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
-@WebServlet(urlPatterns = "/main",
+@WebServlet(urlPatterns = Constants.MAIN_URL,
     initParams = {
         @WebInitParam(name = Constants.INIT_PARAM_NAME_OUTPUT, value = Constants.INIT_PARAM_VALUE_WEB_SOCKET_OUTPUT),
         @WebInitParam(name = Constants.INIT_PARAM_NAME_OPERATOR, value = Constants.INIT_PARAM_VALUE_OPERATOR_PERFORMANCE),
@@ -38,7 +38,7 @@ public class MainController extends HttpServlet {
             String additionParameters = config.getInitParameter(Constants.INIT_PARAM_NAME_ADDITION_PARAMS);
             operator = OperatorFactory.getOperatorFromFactory(operatorName, additionParameters);
             String outputName = config.getInitParameter(Constants.INIT_PARAM_NAME_OUTPUT);
-            OutputFactory.installOutput(outputName);
+            OutputWriter.installOutput(outputName);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,7 +1,6 @@
 package org.jazzteam.roboworld.model.bean.robot;
 
 import org.jazzteam.roboworld.model.bean.task.Task;
-import org.jazzteam.roboworld.model.facroty.OutputFactory;
 
 public abstract class DocileSpecialRobot extends AbstractSpecialRobot {
 

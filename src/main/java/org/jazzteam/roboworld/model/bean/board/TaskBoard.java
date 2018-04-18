@@ -1,7 +1,7 @@
 package org.jazzteam.roboworld.model.bean.board;
 
 import org.jazzteam.roboworld.model.bean.task.Task;
-import org.jazzteam.roboworld.model.exception.TaskIsNullException;
+import org.jazzteam.roboworld.exception.TaskIsNullException;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

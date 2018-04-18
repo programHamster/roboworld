@@ -1,5 +1,7 @@
 package org.jazzteam.roboworld.websocket;
 
+import org.jazzteam.roboworld.Constants;
+
 import javax.websocket.OnClose;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
@@ -8,7 +10,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-@ServerEndpoint(value="/chat", configurator = ChatEndpointConfigurator.class)
+@ServerEndpoint(value= Constants.MESSAGE_URL, configurator = ChatEndpointConfigurator.class)
 public class ChatEndpoint {
 
     private final Set<Session> userSessions = Collections.synchronizedSet(new HashSet<>());

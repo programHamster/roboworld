@@ -4,7 +4,7 @@ import org.jazzteam.roboworld.Constants;
 import org.jazzteam.roboworld.model.bean.operator.MonitoringPerformanceOperator;
 import org.jazzteam.roboworld.model.bean.operator.Operator;
 import org.jazzteam.roboworld.model.bean.operator.RecreaterOperator;
-import org.jazzteam.roboworld.model.exception.unsupported.UnsupportedOperatorException;
+import org.jazzteam.roboworld.exception.unsupported.UnsupportedOperatorException;
 
 public abstract class OperatorFactory {
     public static Operator getOperatorFromFactory(String operatorName, String additionalParams)
@@ -36,11 +36,11 @@ public abstract class OperatorFactory {
             if(period > 0){
                 operator = new MonitoringPerformanceOperator(recreatedOfRobot, period);
             } else {
-                throw new UnsupportedOperatorException("The period parameter isn't positive");
+                throw new UnsupportedOperatorException(org.jazzteam.roboworld.exception.Constants.PERIOD_IS_NOT_POSITIVE);
             }
             return operator;
         } else {
-            throw new UnsupportedOperatorException("MonitoringPerformanceOperator has parameters");
+            throw new UnsupportedOperatorException(org.jazzteam.roboworld.exception.Constants.NO_PARAMETERS);
         }
     }
 
@@ -53,6 +53,6 @@ public abstract class OperatorFactory {
     }
 
     private static String[] split(String params){
-        return params.split(",");
+        return params.split(Constants.PARAM_DELIMITER);
     }
 }

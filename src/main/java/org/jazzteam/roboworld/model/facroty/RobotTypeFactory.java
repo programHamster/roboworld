@@ -1,7 +1,7 @@
 package org.jazzteam.roboworld.model.facroty;
 
 import org.jazzteam.roboworld.Constants;
-import org.jazzteam.roboworld.model.exception.unsupported.UnsupportedRobotTypeException;
+import org.jazzteam.roboworld.exception.unsupported.UnsupportedRobotTypeException;
 
 public abstract class RobotTypeFactory {
     public static RobotType getRobotTypeFromFactory(String robotType) throws UnsupportedRobotTypeException{

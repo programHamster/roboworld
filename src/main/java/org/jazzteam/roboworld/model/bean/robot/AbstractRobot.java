@@ -6,9 +6,10 @@ import org.jazzteam.roboworld.model.bean.board.TaskBoard;
 import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.model.bean.task.generalTask.GeneralTask;
 import org.jazzteam.roboworld.model.bean.task.generalTask.GeneralTaskIdentifier;
-import org.jazzteam.roboworld.model.exception.RobotActuationException;
-import org.jazzteam.roboworld.model.exception.RobotDeadException;
-import org.jazzteam.roboworld.model.facroty.OutputFactory;
+import org.jazzteam.roboworld.exception.Constants;
+import org.jazzteam.roboworld.exception.RobotActuationException;
+import org.jazzteam.roboworld.exception.RobotDeadException;
+import org.jazzteam.roboworld.output.OutputWriter;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 
 import java.util.concurrent.locks.Condition;
@@ -53,7 +54,7 @@ public abstract class AbstractRobot implements Robot {
      */
     protected void activation(){
         if(lock.isLocked() || !lock.tryLock()){
-            throw new RobotActuationException("the robot is already activated");
+            throw new RobotActuationException(Constants.ROBOT_IS_ALREADY_ACTIVATED);
         }
     }
 
@@ -66,7 +67,7 @@ public abstract class AbstractRobot implements Robot {
         Task task = removeTask();
         if(task != null){
             task.perform();
-            OutputFactory.println("The robot \"" + getName() + "\" completed the task \"" + task.getName() + "\"");
+            OutputWriter.write("The robot \"" + getName() + "\" completed the task \"" + task.getName() + "\"");
         } else {
             if(!takeSharedTask()){
                 await();
@@ -95,7 +96,7 @@ public abstract class AbstractRobot implements Robot {
      */
     protected void shutdown(){
         tasks = null;
-        OutputFactory.println("The robot \"" + getName() + "\" is dead.");
+        OutputWriter.write("The robot \"" + getName() + "\" is dead.");
     }
 
     public void start(){

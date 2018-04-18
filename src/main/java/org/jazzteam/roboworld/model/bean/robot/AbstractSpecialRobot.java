@@ -2,8 +2,8 @@ package org.jazzteam.roboworld.model.bean.robot;
 
 import org.jazzteam.roboworld.model.bean.board.SharedBoard;
 import org.jazzteam.roboworld.model.bean.task.Task;
-import org.jazzteam.roboworld.model.exception.TaskIsNullException;
-import org.jazzteam.roboworld.model.exception.TaskNotFeasibleException;
+import org.jazzteam.roboworld.exception.TaskIsNullException;
+import org.jazzteam.roboworld.exception.TaskNotFeasibleException;
 
 public abstract class AbstractSpecialRobot extends AbstractRobot implements SpecialRobot {
 

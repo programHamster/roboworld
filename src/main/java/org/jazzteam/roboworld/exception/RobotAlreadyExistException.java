@@ -1,4 +1,4 @@
-package org.jazzteam.roboworld.model.exception;
+package org.jazzteam.roboworld.exception;
 
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 

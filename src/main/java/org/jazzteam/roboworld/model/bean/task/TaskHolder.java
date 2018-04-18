@@ -4,7 +4,8 @@ import org.jazzteam.roboworld.model.bean.task.generalTask.GeneralTaskIdentifier;
 import org.jazzteam.roboworld.model.bean.task.specialTask.BackEndTask;
 import org.jazzteam.roboworld.model.bean.task.specialTask.FrontEndTask;
 import org.jazzteam.roboworld.model.bean.task.specialTask.HRTask;
-import org.jazzteam.roboworld.model.exception.TaskIsNullException;
+import org.jazzteam.roboworld.exception.Constants;
+import org.jazzteam.roboworld.exception.TaskIsNullException;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 
 import java.util.Collections;
@@ -36,7 +37,7 @@ public class TaskHolder {
 
     public void putTask(Task task){
         if(task == null){
-            throw new TaskIsNullException("Task is null");
+            throw new TaskIsNullException(Constants.TASK_IS_NULL);
         }
         String taskName = task.getName();
         if(task instanceof BackEndTask){
@@ -48,7 +49,7 @@ public class TaskHolder {
         } else if(GeneralTaskIdentifier.isGeneralTask(task)){
             allTasks.get(RobotType.GENERAL).put(taskName, task);
         } else {
-            throw new IllegalArgumentException("unknown task type");
+            throw new IllegalArgumentException(Constants.UNKNOWN_TASK_TYPE);
         }
     }
 

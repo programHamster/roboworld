@@ -18,7 +18,7 @@ public abstract class AbstractOperator implements Operator {
         return robots.putIfAbsent(robot.getName(), robot);
     }
 
-    protected final Robot get(String robotName){
+    public final Robot get(String robotName){
         return robots.get(robotName);
     }
 

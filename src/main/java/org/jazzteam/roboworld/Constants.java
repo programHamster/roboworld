@@ -1,12 +1,15 @@
 package org.jazzteam.roboworld;
 
 public abstract class Constants {
+    public static final String EMPTY = "";
+    public static final String DEFAULT_UUID_DELIMITER = "-";
     //                    Commands
     public static final String PARAM_NAME_COMMAND = "command";
     public static final String COMMAND_CREATE_ROBOT = "createRobot";
     public static final String COMMAND_CREATE_TASK = "createTask";
     public static final String COMMAND_GIVE_TASK = "giveTask";
     //                    Task type
+    public static final String TASK = "task";
     public static final String PARAM_NAME_TASK_TYPE = "taskType";
     public static final String BACK_END_TASK_VALUE = "back";
     public static final String FRONT_END_TASK_VALUE = "front";
@@ -25,6 +28,8 @@ public abstract class Constants {
     public static final String PARAM_NAME_ROBOT_NAME = "robotName";
     //                   Controllers
     public static final String INIT_PARAM_NAME_OUTPUT = "output";
+    public static final String MESSAGE_URL = "/chat";
+    public static final String MAIN_URL = "/main";
     public static final String INIT_PARAM_VALUE_WEB_SOCKET_OUTPUT = "webSocket";
     public static final String INIT_PARAM_VALUE_SYSTEM = "system";
     public static final String INIT_PARAM_NAME_OPERATOR = "operator";
@@ -38,5 +43,8 @@ public abstract class Constants {
     public static final String PARAM_NAME_INIT = "need";
     public static final String PARAM_VALUE_TASKS_INIT = "tasks";
     public static final String PARAM_VALUE_ROBOTS_INIT = "robots";
-
+    //                   factories
+    public static final String PARAM_DELIMITER = ",";
+    //                   output
+    public static final String KEY_DELIMITER = ":";
 }

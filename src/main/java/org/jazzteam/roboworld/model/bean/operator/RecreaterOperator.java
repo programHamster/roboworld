@@ -3,11 +3,8 @@ package org.jazzteam.roboworld.model.bean.operator;
 import org.jazzteam.roboworld.model.bean.board.SharedBoard;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 import org.jazzteam.roboworld.model.bean.task.Task;
-import org.jazzteam.roboworld.model.exception.RobotAlreadyExistException;
-import org.jazzteam.roboworld.model.exception.RobotDeadException;
-import org.jazzteam.roboworld.model.exception.RobotNotFoundException;
-import org.jazzteam.roboworld.model.exception.TaskIsNullException;
-import org.jazzteam.roboworld.model.facroty.OutputFactory;
+import org.jazzteam.roboworld.exception.*;
+import org.jazzteam.roboworld.output.OutputWriter;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 
 import java.util.UUID;
@@ -80,7 +77,7 @@ public class RecreaterOperator extends AbstractOperator {
 
     public void assignTask(Task task, Robot robot){
         if(robot == null){
-            throw new NullPointerException("Robot is null");
+            throw new NullPointerException(Constants.ROBOT_IS_NULL);
         }
         assignTask(task, robot.getName());
     }
@@ -105,7 +102,7 @@ public class RecreaterOperator extends AbstractOperator {
             if(recreate && robot.isDie()){
                 try{
                     robot = createRobot(robot.getRobotType(), robot.getName(), true);
-                    OutputFactory.println("Robot \"" + robot.getName() + "\" is recreated");
+                    OutputWriter.write("Robot \"" + robot.getName() + "\" is recreated");
                 } catch(RobotAlreadyExistException e){
                     // never happen
                 }
@@ -118,9 +115,9 @@ public class RecreaterOperator extends AbstractOperator {
     }
 
     private static String getRandomName(){
-        // max length is 36
         final int LENGTH_NAME = 5;
-        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+        String uuid = UUID.randomUUID().toString().replaceAll(org.jazzteam.roboworld.
+                Constants.DEFAULT_UUID_DELIMITER, org.jazzteam.roboworld.Constants.EMPTY);
         return uuid.substring(0, LENGTH_NAME);
     }
 

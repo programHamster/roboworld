@@ -1,5 +1,7 @@
 package org.jazzteam.roboworld.model.bean.tracker;
 
+import org.jazzteam.roboworld.exception.Constants;
+
 import java.util.Timer;
 
 public abstract class TimeTracker implements Tracker {
@@ -8,7 +10,7 @@ public abstract class TimeTracker implements Tracker {
 
     public TimeTracker(long period){
         if(period <= 0){
-            throw new IllegalArgumentException("The period parameter isn't positive");
+            throw new IllegalArgumentException(Constants.PERIOD_IS_NOT_POSITIVE);
         }
         this.period = period;
         timer = new Timer(true);

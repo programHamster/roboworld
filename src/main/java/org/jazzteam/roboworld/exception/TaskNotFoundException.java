@@ -1,4 +1,4 @@
-package org.jazzteam.roboworld.model.exception;
+package org.jazzteam.roboworld.exception;
 
 public class TaskNotFoundException extends RuntimeException {
     private String taskName;

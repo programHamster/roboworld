@@ -2,7 +2,7 @@ package org.jazzteam.roboworld.model.facroty;
 
 import org.jazzteam.roboworld.Constants;
 import org.jazzteam.roboworld.command.Command;
-import org.jazzteam.roboworld.model.exception.unsupported.UnsupportedCommandException;
+import org.jazzteam.roboworld.exception.unsupported.UnsupportedCommandException;
 
 public abstract class CommandFactory {
     public static Command getCommandFromFactory(String commandName) throws UnsupportedCommandException{

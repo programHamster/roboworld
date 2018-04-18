@@ -1,7 +1,6 @@
 package org.jazzteam.roboworld.model.bean.robot;
 
 import org.jazzteam.roboworld.model.bean.task.Task;
-import org.jazzteam.roboworld.model.exception.RobotDeadException;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 
 public interface Robot {

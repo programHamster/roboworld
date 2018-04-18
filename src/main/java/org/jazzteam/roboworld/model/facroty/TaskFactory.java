@@ -6,7 +6,7 @@ import org.jazzteam.roboworld.model.bean.task.generalTask.DieTask;
 import org.jazzteam.roboworld.model.bean.task.specialTask.BackEndTask;
 import org.jazzteam.roboworld.model.bean.task.specialTask.FrontEndTask;
 import org.jazzteam.roboworld.model.bean.task.specialTask.HRTask;
-import org.jazzteam.roboworld.model.exception.unsupported.UnsupportedTaskException;
+import org.jazzteam.roboworld.exception.unsupported.UnsupportedTaskException;
 
 public abstract class TaskFactory {
 

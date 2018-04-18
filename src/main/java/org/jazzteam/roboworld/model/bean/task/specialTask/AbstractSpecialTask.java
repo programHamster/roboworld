@@ -1,7 +1,7 @@
 package org.jazzteam.roboworld.model.bean.task.specialTask;
 
 import org.jazzteam.roboworld.model.bean.task.AbstractTask;
-import org.jazzteam.roboworld.model.exception.TaskNotFeasibleException;
+import org.jazzteam.roboworld.exception.TaskNotFeasibleException;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -20,7 +20,7 @@ public abstract class AbstractSpecialTask extends AbstractTask implements Specia
             Thread.sleep(performingTime);
         } catch (InterruptedException e) {
             String robotName = Thread.currentThread().getName();
-            throw new TaskNotFeasibleException("\"" + robotName + "\" cannot perform the task \"" + getName() + "\"");
+            throw new TaskNotFeasibleException(robotName, this);
         }
     }
 

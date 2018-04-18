@@ -1,6 +1,6 @@
 package org.jazzteam.roboworld.model.bean.task.specialTask;
 
-import org.jazzteam.roboworld.model.facroty.OutputFactory;
+import org.jazzteam.roboworld.output.OutputWriter;
 
 public class FrontEndTask extends AbstractSpecialTask {
 
@@ -10,7 +10,7 @@ public class FrontEndTask extends AbstractSpecialTask {
     }
 
     public void perform(){
-        OutputFactory.println("The front-end task \"" + getName() + "\" is performing...");
+        OutputWriter.write("The front-end task \"" + getName() + "\" is performing...");
         super.perform();
     }
 

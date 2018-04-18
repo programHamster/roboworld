@@ -3,8 +3,9 @@ package org.jazzteam.roboworld.model.bean.tracker;
 import org.jazzteam.roboworld.model.bean.board.SharedBoard;
 import org.jazzteam.roboworld.model.bean.operator.Operator;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
-import org.jazzteam.roboworld.model.facroty.OutputFactory;
+import org.jazzteam.roboworld.output.OutputWriter;
 import org.jazzteam.roboworld.model.facroty.RobotType;
+import org.jazzteam.roboworld.output.RoboWorldEvent;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -51,7 +52,8 @@ public class MonitorPerformanceTracker extends TimeTracker {
             }
             if(numberTasks > numberRobots){
                 Robot robot = operator.createRobot(type);
-                OutputFactory.println(type.name() + " robots can not cope, created an additional robot " + robot.getName());
+                String message = type.name() + " robots can not cope, created an additional robot " + robot.getName();
+                OutputWriter.write(message, RoboWorldEvent.ROBOT);
             } else {
                 this.cancel();
             }

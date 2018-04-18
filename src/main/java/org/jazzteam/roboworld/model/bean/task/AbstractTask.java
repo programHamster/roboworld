@@ -1,5 +1,7 @@
 package org.jazzteam.roboworld.model.bean.task;
 
+import org.jazzteam.roboworld.Constants;
+
 public abstract class AbstractTask implements Task {
     private static int commonId;
     private final int ID;
@@ -7,7 +9,7 @@ public abstract class AbstractTask implements Task {
 
     public AbstractTask() {
         ID = commonId++;
-        name = "task" + ID;
+        name = Constants.TASK + ID;
     }
 
     public AbstractTask(String name){
