@@ -2,7 +2,7 @@ package org.jazzteam.roboworld.model.exception;
 
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 
-public class RobotAlreadyExistException extends Exception {
+public class RobotAlreadyExistException extends RuntimeException {
     private Robot robot;
 
     public RobotAlreadyExistException() {
@@ -32,6 +32,12 @@ public class RobotAlreadyExistException extends Exception {
     }
 
     public String getMessage(){
-        return "The robot named \"" + robot.getName() + "\" already exists.";
+        String message;
+        if(robot != null){
+            message = "The robot named \"" + robot.getName() + "\" already exists";
+        } else {
+            message = super.getMessage();
+        }
+        return message;
     }
 }

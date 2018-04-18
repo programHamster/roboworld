@@ -5,8 +5,10 @@ import org.jazzteam.roboworld.model.bean.board.SharedBoard;
 import org.jazzteam.roboworld.model.bean.board.TaskBoard;
 import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.model.bean.task.generalTask.GeneralTask;
+import org.jazzteam.roboworld.model.bean.task.generalTask.GeneralTaskIdentifier;
 import org.jazzteam.roboworld.model.exception.RobotActuationException;
 import org.jazzteam.roboworld.model.exception.RobotDeadException;
+import org.jazzteam.roboworld.model.facroty.OutputFactory;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 
 import java.util.concurrent.locks.Condition;
@@ -36,9 +38,6 @@ public abstract class AbstractRobot implements Robot {
             while(!isDie()){
                 work();
             }
-        }catch(RobotDeadException e){
-            // to report the use of a dead robot
-            throw new RuntimeException(e.getMessage(), e);
         } finally {
             isRunning = false;
             // shutdown stage
@@ -63,10 +62,11 @@ public abstract class AbstractRobot implements Robot {
      *
      * @return the completed task if any task was performed, <code>null</code> otherwise
      */
-    protected Task work() throws RobotDeadException{
+    protected Task work() {
         Task task = removeTask();
         if(task != null){
             task.perform();
+            OutputFactory.println("The robot \"" + getName() + "\" completed the task \"" + task.getName() + "\"");
         } else {
             if(!takeSharedTask()){
                 await();
@@ -80,7 +80,7 @@ public abstract class AbstractRobot implements Robot {
      *
      * @return <code>true</code> if some task is found, <code>false</code> otherwise
      */
-    protected boolean takeSharedTask() throws RobotDeadException{
+    protected boolean takeSharedTask() {
         boolean result = false;
         Task task = generalTaskBoard.poll();
         if(task != null){
@@ -95,6 +95,7 @@ public abstract class AbstractRobot implements Robot {
      */
     protected void shutdown(){
         tasks = null;
+        OutputFactory.println("The robot \"" + getName() + "\" is dead.");
     }
 
     public void start(){
@@ -109,22 +110,22 @@ public abstract class AbstractRobot implements Robot {
         return thread.getName();
     }
 
-    public void addTask(Task task) throws RobotDeadException{
+    public void addTask(Task task) {
         checkLife();
         tasks.add(task);
     }
 
-    protected final Task getTask() throws RobotDeadException{
+    protected final Task getTask() {
         checkLife();
         return tasks.get();
     }
 
-    protected final Task removeTask() throws RobotDeadException{
+    protected final Task removeTask() {
         checkLife();
         return tasks.poll();
     }
 
-    public final void wakeUp() throws RobotDeadException{
+    public final void wakeUp(){
         checkLife();
         if(lock.tryLock()){
             try {
@@ -135,13 +136,17 @@ public abstract class AbstractRobot implements Robot {
         }
     }
 
-    protected final void await() throws RobotDeadException{
+    protected final void await() {
         try {
             condition.await();
             lock.lockInterruptibly();
         } catch (InterruptedException e) {
             throw new RobotDeadException(e.getMessage(), e);
         }
+    }
+
+    protected boolean checkTaskFeasibility(Task task){
+        return GeneralTaskIdentifier.isGeneralTask(task);
     }
 
     /**
@@ -155,9 +160,9 @@ public abstract class AbstractRobot implements Robot {
         return thread.isInterrupted() || !isAlive;
     }
 
-    private void checkLife() throws RobotDeadException{
-        if(isDie()){
-            throw new RobotDeadException();
+    private void checkLife() {
+        if(isDie() || tasks == null){
+            throw new RobotDeadException(getName());
         }
     }
 

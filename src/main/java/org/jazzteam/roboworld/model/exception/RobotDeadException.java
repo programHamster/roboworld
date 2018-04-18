@@ -2,7 +2,7 @@ package org.jazzteam.roboworld.model.exception;
 
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 
-public class RobotDeadException extends Exception {
+public class RobotDeadException extends RuntimeException {
     private Robot robot;
 
     public RobotDeadException() {

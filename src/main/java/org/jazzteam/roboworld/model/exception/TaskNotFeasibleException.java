@@ -36,7 +36,7 @@ public class TaskNotFeasibleException extends RuntimeException {
 
     public String getMessage(){
         String message;
-        if(robotName != null){
+        if(robotName != null && task != null){
             message = "the robot \"" + robotName + "\" cannot perform the task " + task.getName();
         } else {
             message = super.getMessage();

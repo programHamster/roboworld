@@ -8,8 +8,8 @@ public interface Robot {
     void start();
     void setName(String name);
     String getName();
-    void addTask(Task task) throws RobotDeadException;
-    void wakeUp() throws RobotDeadException;
+    void addTask(Task task);
+    void wakeUp();
     boolean isAlive();
     boolean isRunning();
     boolean isDie();

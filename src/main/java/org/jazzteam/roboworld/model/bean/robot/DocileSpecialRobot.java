@@ -1,19 +1,17 @@
 package org.jazzteam.roboworld.model.bean.robot;
 
 import org.jazzteam.roboworld.model.bean.task.Task;
-import org.jazzteam.roboworld.model.exception.RobotDeadException;
+import org.jazzteam.roboworld.model.facroty.OutputFactory;
 
 public abstract class DocileSpecialRobot extends AbstractSpecialRobot {
 
-    protected Task work() throws RobotDeadException{
+    protected Task work() {
         Task task = super.work();
-        if(task != null){
-            System.out.println("The robot \"" + getName() + "\" completed the task \"" + task.getName() + "\"");
-        }
+
         return task;
     }
 
-    protected boolean takeSharedTask() throws RobotDeadException{
+    protected boolean takeSharedTask() {
         boolean result;
         Task task = getSharedSpecialTask();
         if(task != null){
@@ -23,12 +21,6 @@ public abstract class DocileSpecialRobot extends AbstractSpecialRobot {
             result = super.takeSharedTask();
         }
         return result;
-    }
-
-    @Override
-    protected void shutdown(){
-        super.shutdown();
-        System.out.println("The robot \"" + Thread.currentThread().getName() + "\" is dead.");
     }
 
 }

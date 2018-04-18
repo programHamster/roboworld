@@ -6,17 +6,19 @@ import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.model.exception.RobotAlreadyExistException;
 import org.jazzteam.roboworld.model.exception.RobotDeadException;
 import org.jazzteam.roboworld.model.exception.RobotNotFoundException;
+import org.jazzteam.roboworld.model.exception.TaskIsNullException;
+import org.jazzteam.roboworld.model.facroty.OutputFactory;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 
 import java.util.UUID;
 
-public class OperatorRecreater extends AbstractOperator {
+public class RecreaterOperator extends AbstractOperator {
     private boolean recreate = true;
 
-    public OperatorRecreater(){
+    public RecreaterOperator(){
     }
 
-    public OperatorRecreater(boolean recreateOfRobot){
+    public RecreaterOperator(boolean recreateOfRobot){
         this.recreate = recreateOfRobot;
     }
 
@@ -50,9 +52,9 @@ public class OperatorRecreater extends AbstractOperator {
         }
         robot.start();
         if(withReplacement){
-            getRobots().put(robot.getName(), robot);
+            put(robot);
         } else {
-            if(getRobots().putIfAbsent(robot.getName(), robot) != null){
+            if(putIfAbsent(robot) != null){
                 throw new RobotAlreadyExistException(robot);
             }
         }
@@ -66,11 +68,7 @@ public class OperatorRecreater extends AbstractOperator {
                 robot.wakeUp();
             } catch(RobotDeadException e){
                 if(recreate){
-                    try {
-                        createRobot(robot.getRobotType(), robot.getName(), true);
-                    } catch (RobotAlreadyExistException e1) {
-                        // never happen
-                    }
+                    createRobot(robot.getRobotType(), robot.getName(), true);
                 }
             }
         });
@@ -80,20 +78,23 @@ public class OperatorRecreater extends AbstractOperator {
         broadcastTask(task, RobotType.GENERAL);
     }
 
-    public void assignTask(Task task, Robot robot) throws RobotNotFoundException, RobotDeadException{
+    public void assignTask(Task task, Robot robot){
         if(robot == null){
             throw new NullPointerException("Robot is null");
         }
         assignTask(task, robot.getName());
     }
 
-    public void assignTask(Task task, String nameOfRobot) throws RobotNotFoundException, RobotDeadException{
-        Robot robot = getRobots().get(nameOfRobot);
+    public void assignTask(Task task, String nameOfRobot){
+        if(task == null){
+            throw new TaskIsNullException();
+        }
+        Robot robot = get(nameOfRobot);
         if(robot == null){
-            throw new RobotNotFoundException();
+            throw new RobotNotFoundException(nameOfRobot);
         }
         if(!recreate && robot.isDie()){
-            getRobots().remove(robot.getName());
+            remove(robot.getName());
             throw new RobotDeadException(robot);
         }
         tryAssignTask(task, robot);
@@ -104,7 +105,7 @@ public class OperatorRecreater extends AbstractOperator {
             if(recreate && robot.isDie()){
                 try{
                     robot = createRobot(robot.getRobotType(), robot.getName(), true);
-                    System.out.println(robot.getName() + " is recreated");
+                    OutputFactory.println("Robot \"" + robot.getName() + "\" is recreated");
                 } catch(RobotAlreadyExistException e){
                     // never happen
                 }
@@ -120,8 +121,7 @@ public class OperatorRecreater extends AbstractOperator {
         // max length is 36
         final int LENGTH_NAME = 5;
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        String shortUuid = uuid.substring(0, LENGTH_NAME);
-        return shortUuid;
+        return uuid.substring(0, LENGTH_NAME);
     }
 
 }

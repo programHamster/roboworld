@@ -5,7 +5,7 @@ import org.jazzteam.roboworld.model.bean.tracker.MonitorPerformanceTracker;
 import org.jazzteam.roboworld.model.bean.tracker.Tracker;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 
-public class MonitoringPerformanceOperator extends OperatorRecreater {
+public class MonitoringPerformanceOperator extends RecreaterOperator {
     private Tracker tracker;
 
     public MonitoringPerformanceOperator(long period){

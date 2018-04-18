@@ -7,6 +7,9 @@ public abstract class TimeTracker implements Tracker {
     private long period;
 
     public TimeTracker(long period){
+        if(period <= 0){
+            throw new IllegalArgumentException("The period parameter isn't positive");
+        }
         this.period = period;
         timer = new Timer(true);
     }

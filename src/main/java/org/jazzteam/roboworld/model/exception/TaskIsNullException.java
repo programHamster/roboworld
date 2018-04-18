@@ -18,4 +18,8 @@ public class TaskIsNullException extends RuntimeException {
                                   boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
+
+    public String getMessage(){
+        return "task is null";
+    }
 }
