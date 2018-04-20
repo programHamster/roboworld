@@ -1,5 +1,6 @@
 package org.jazzteam.roboworld.model.bean.operator;
 
+import org.jazzteam.roboworld.exception.notSpecified.RobotNameNotSpecifiedException;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 
@@ -19,6 +20,9 @@ public abstract class AbstractOperator implements Operator {
     }
 
     public final Robot get(String robotName){
+        if(robotName == null || robotName.isEmpty()){
+            throw new RobotNameNotSpecifiedException();
+        }
         return robots.get(robotName);
     }
 

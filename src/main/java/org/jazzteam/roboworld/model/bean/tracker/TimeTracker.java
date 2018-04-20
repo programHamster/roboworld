@@ -9,10 +9,7 @@ public abstract class TimeTracker implements Tracker {
     private long period;
 
     public TimeTracker(long period){
-        if(period <= 0){
-            throw new IllegalArgumentException(Constants.PERIOD_IS_NOT_POSITIVE);
-        }
-        this.period = period;
+        setPeriod(period);
         timer = new Timer(true);
     }
 
@@ -21,6 +18,9 @@ public abstract class TimeTracker implements Tracker {
     }
 
     public void setPeriod(long period) {
+        if(period <= 0){
+            throw new IllegalArgumentException(Constants.PERIOD_IS_NOT_POSITIVE);
+        }
         this.period = period;
     }
 

@@ -1,5 +1,6 @@
 package org.jazzteam.roboworld.model.bean.tracker;
 
+import org.jazzteam.roboworld.exception.Constants;
 import org.jazzteam.roboworld.model.bean.board.SharedBoard;
 import org.jazzteam.roboworld.model.bean.operator.Operator;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
@@ -17,6 +18,9 @@ public class MonitorPerformanceTracker extends TimeTracker {
 
     public MonitorPerformanceTracker(Operator operator, long period) {
         super(period);
+        if(operator == null){
+            throw new NullPointerException(Constants.OPERATOR_IS_NULL);
+        }
         this.operator = operator;
     }
 
@@ -39,11 +43,14 @@ public class MonitorPerformanceTracker extends TimeTracker {
         private final RobotType type;
 
         private MonitorPerformance(RobotType type){
+            if(type == null){
+                throw new NullPointerException(Constants.ROBOT_TYPE_IS_NULL);
+            }
             this.type = type;
         }
 
         public void run(){
-            int numberTasks = SharedBoard.getBoard(type).size();
+            int numberTasks = SharedBoard.getInstance().numberTasks(type);
             int numberRobots;
             if(type == RobotType.GENERAL){
                 numberRobots = operator.countRobots();

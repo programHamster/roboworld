@@ -1,12 +1,11 @@
 package org.jazzteam.roboworld.command;
 
 import org.jazzteam.roboworld.Constants;
+import org.jazzteam.roboworld.exception.*;
 import org.jazzteam.roboworld.model.bean.operator.Operator;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.model.bean.task.TaskHolder;
-import org.jazzteam.roboworld.exception.TaskIsNullException;
-import org.jazzteam.roboworld.exception.TaskNotFoundException;
 import org.jazzteam.roboworld.exception.unsupported.UnsupportedException;
 import org.jazzteam.roboworld.output.OutputWriter;
 import org.jazzteam.roboworld.model.facroty.RobotType;
@@ -22,11 +21,7 @@ public enum Command {
             RobotType robotType = getRobotType(request);
             String robotName = request.getParameter(Constants.PARAM_NAME_ROBOT_NAME);
             Robot robot;
-            if(robotName == null || (robotName = robotName.trim()).isEmpty()){
-                robot = operator.createRobot(robotType);
-            } else {
-                robot = operator.createRobot(robotType, robotName);
-            }
+            robot = operator.createRobot(robotType, robotName);
             OutputWriter.write("Robot \"" + robot.getName() + "\" created", RoboWorldEvent.ROBOT);
         }
     }, CREATE_TASK{
@@ -50,10 +45,10 @@ public enum Command {
                 } else {
                     RobotType robotType = getRobotType(request);
                     task = TaskHolder.getInstance().getTask(taskName, robotType);
-                    operator.broadcastTask(task, robotType);
+                    operator.broadcastTask(task);
                 }
             } catch (TaskIsNullException e) {
-                throw new TaskNotFoundException(taskName, " or robot type is wrong");
+                throw new TaskNotFoundException(taskName);
             }
         }
     };
@@ -67,10 +62,6 @@ public enum Command {
 
     protected static boolean getCheckbox(HttpServletRequest request, String paramName){
         String checkboxValue = request.getParameter(paramName);
-        boolean checkbox = false;
-        if(checkboxValue != null){
-            checkbox = Boolean.valueOf(checkboxValue);
-        }
-        return checkbox;
+        return Boolean.valueOf(checkboxValue);
     }
 }

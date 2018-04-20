@@ -1,23 +1,18 @@
 package org.jazzteam.roboworld.model.bean.robot;
 
+import org.jazzteam.roboworld.exception.*;
 import org.jazzteam.roboworld.model.bean.board.Board;
 import org.jazzteam.roboworld.model.bean.board.SharedBoard;
 import org.jazzteam.roboworld.model.bean.board.TaskBoard;
 import org.jazzteam.roboworld.model.bean.task.Task;
-import org.jazzteam.roboworld.model.bean.task.generalTask.GeneralTask;
-import org.jazzteam.roboworld.model.bean.task.generalTask.GeneralTaskIdentifier;
-import org.jazzteam.roboworld.exception.Constants;
-import org.jazzteam.roboworld.exception.RobotActuationException;
-import org.jazzteam.roboworld.exception.RobotDeadException;
-import org.jazzteam.roboworld.output.OutputWriter;
 import org.jazzteam.roboworld.model.facroty.RobotType;
+import org.jazzteam.roboworld.output.OutputWriter;
 
+import java.util.Objects;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class AbstractRobot implements Robot {
-    // reference to the shared task board
-    private static final Board<GeneralTask> generalTaskBoard = SharedBoard.getBoard(RobotType.GENERAL);
     private Board<Task> tasks = new TaskBoard<>();
     private final Thread thread;
     private final ReentrantLock lock = new ReentrantLock();
@@ -40,10 +35,8 @@ public abstract class AbstractRobot implements Robot {
                 work();
             }
         } finally {
-            isRunning = false;
             // shutdown stage
             shutdown();
-            isAlive = false;
             // dead stage
         }
     }
@@ -58,12 +51,7 @@ public abstract class AbstractRobot implements Robot {
         }
     }
 
-    /**
-     * This is the default behavior of the robot. Returns the completed task if any task was performed.
-     *
-     * @return the completed task if any task was performed, <code>null</code> otherwise
-     */
-    protected Task work() {
+    protected void work() {
         Task task = removeTask();
         if(task != null){
             task.perform();
@@ -73,7 +61,6 @@ public abstract class AbstractRobot implements Robot {
                 await();
             }
         }
-        return task;
     }
 
     /**
@@ -83,10 +70,9 @@ public abstract class AbstractRobot implements Robot {
      */
     protected boolean takeSharedTask() {
         boolean result = false;
-        Task task = generalTaskBoard.poll();
+        Task task = SharedBoard.getInstance().poll(RobotType.GENERAL);
         if(task != null){
-            addTask(task);
-            result = true;
+            result = addTask(task);
         }
         return result;
     }
@@ -96,11 +82,24 @@ public abstract class AbstractRobot implements Robot {
      */
     protected void shutdown(){
         tasks = null;
+        if(!thread.isInterrupted()){
+            thread.interrupt();
+        }
+        isRunning = false;
+        isAlive = false;
         OutputWriter.write("The robot \"" + getName() + "\" is dead.");
     }
 
     public void start(){
-        thread.start();
+        try {
+            if(isAlive){
+                thread.start();
+            } else {
+                throw new RobotDeadException(this);
+            }
+        } catch (IllegalThreadStateException e) {
+            throw new RobotActuationException(Constants.ROBOT_IS_ALREADY_ACTIVATED);
+        }
     }
 
     public void setName(String name){
@@ -111,9 +110,16 @@ public abstract class AbstractRobot implements Robot {
         return thread.getName();
     }
 
-    public void addTask(Task task) {
+    public boolean addTask(Task task) {
+        if(task == null){
+            throw new TaskIsNullException();
+        }
         checkLife();
-        tasks.add(task);
+        if(checkTaskFeasibility(task)){
+            return tasks.add(task);
+        } else {
+            throw new TaskNotFeasibleException(getName(), task);
+        }
     }
 
     protected final Task getTask() {
@@ -147,7 +153,8 @@ public abstract class AbstractRobot implements Robot {
     }
 
     protected boolean checkTaskFeasibility(Task task){
-        return GeneralTaskIdentifier.isGeneralTask(task);
+        RobotType taskType = RobotType.identifyRobotType(task);
+        return taskType == getRobotType() || taskType == RobotType.GENERAL;
     }
 
     /**
@@ -163,7 +170,7 @@ public abstract class AbstractRobot implements Robot {
 
     private void checkLife() {
         if(isDie() || tasks == null){
-            throw new RobotDeadException(getName());
+            throw new RobotDeadException(this);
         }
     }
 
@@ -187,6 +194,24 @@ public abstract class AbstractRobot implements Robot {
      */
     public final boolean isRunning(){
         return isRunning;
+    }
+
+    public boolean equals(Object o){
+        if(o == null){
+            return false;
+        }
+        if(o == this){
+            return true;
+        }
+        if(!(o instanceof AbstractRobot)){
+            return false;
+        }
+        AbstractRobot robot = (AbstractRobot)o;
+        return robot.thread.getName().equals(thread.getName()) && thread.equals(robot.thread);
+    }
+
+    public int hashCode(){
+        return Objects.hash(thread, thread.getName());
     }
 
 }

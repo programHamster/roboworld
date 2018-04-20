@@ -1,10 +1,12 @@
 package org.jazzteam.roboworld.model.facroty;
 
+import org.jazzteam.roboworld.exception.TaskIsNullException;
 import org.jazzteam.roboworld.model.bean.robot.GeneralRobot;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 import org.jazzteam.roboworld.model.bean.robot.specialRobot.BackEndDeveloperRobot;
 import org.jazzteam.roboworld.model.bean.robot.specialRobot.FrontEndDeveloperRobot;
 import org.jazzteam.roboworld.model.bean.robot.specialRobot.HRRobot;
+import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.model.bean.task.specialTask.BackEndTask;
 import org.jazzteam.roboworld.model.bean.task.specialTask.FrontEndTask;
 import org.jazzteam.roboworld.model.bean.task.specialTask.HRTask;
@@ -43,4 +45,20 @@ public enum RobotType {
 
     public abstract Class<?>[] getFeasibleTasks();
     public abstract Robot getRobot();
+
+    public static RobotType identifyRobotType(Task task){
+        if(task == null){
+            throw new TaskIsNullException();
+        }
+        RobotType result = RobotType.GENERAL;
+        for(RobotType type : RobotType.values()){
+            for(Class<?> taskClass : type.getFeasibleTasks()){
+                if(taskClass.isInstance(task)){
+                    result = type;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
 }

@@ -1,58 +1,31 @@
 package org.jazzteam.roboworld.model.facroty;
 
 import org.jazzteam.roboworld.Constants;
-import org.jazzteam.roboworld.model.bean.operator.MonitoringPerformanceOperator;
+import org.jazzteam.roboworld.exception.unsupported.UnsupportedOperatorException;
 import org.jazzteam.roboworld.model.bean.operator.Operator;
 import org.jazzteam.roboworld.model.bean.operator.RecreaterOperator;
-import org.jazzteam.roboworld.exception.unsupported.UnsupportedOperatorException;
 
 public abstract class OperatorFactory {
-    public static Operator getOperatorFromFactory(String operatorName, String additionalParams)
+    public static Operator getOperatorFromFactory(String operatorName, String additionalParam)
             throws UnsupportedOperatorException{
+        if(operatorName == null){
+            throw new NullPointerException(org.jazzteam.roboworld.exception.Constants.OPERATOR_NAME_IS_NULL);
+        }
         switch(operatorName){
-            case Constants.INIT_PARAM_VALUE_OPERATOR_PERFORMANCE:
-                return getMonitoringPerformanceOperator(additionalParams);
             case Constants.INIT_PARAM_VALUE_OPERATOR_RECREATOR:
-                return getRecreaterOperator(additionalParams);
+                return getRecreaterOperator(additionalParam);
             default:
                 throw new UnsupportedOperatorException();
         }
     }
 
-    private static MonitoringPerformanceOperator getMonitoringPerformanceOperator(String additionalParams)
-            throws UnsupportedOperatorException{
-        MonitoringPerformanceOperator operator;
-        if(additionalParams != null){
-            String[] params = split(additionalParams);
-            long period = 0;
-            // because true is default value
-            boolean recreatedOfRobot = true;
-            switch (params.length){
-                case 2:
-                    recreatedOfRobot = Boolean.valueOf(params[1]);
-                case 1:
-                    period = Long.valueOf(params[0]);
-            }
-            if(period > 0){
-                operator = new MonitoringPerformanceOperator(recreatedOfRobot, period);
-            } else {
-                throw new UnsupportedOperatorException(org.jazzteam.roboworld.exception.Constants.PERIOD_IS_NOT_POSITIVE);
-            }
-            return operator;
-        } else {
-            throw new UnsupportedOperatorException(org.jazzteam.roboworld.exception.Constants.NO_PARAMETERS);
-        }
-    }
-
-    private static RecreaterOperator getRecreaterOperator(String additionalParams){
+    private static RecreaterOperator getRecreaterOperator(String additionalParam){
+        // because it default value
         boolean recreatedOfRobot = true;
-        if(additionalParams != null){
-            recreatedOfRobot = Boolean.valueOf(additionalParams);
+        if(additionalParam != null){
+            recreatedOfRobot = Boolean.valueOf(additionalParam);
         }
         return new RecreaterOperator(recreatedOfRobot);
     }
 
-    private static String[] split(String params){
-        return params.split(Constants.PARAM_DELIMITER);
-    }
 }

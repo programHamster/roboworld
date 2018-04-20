@@ -4,12 +4,16 @@ import org.jazzteam.roboworld.model.bean.board.SharedBoard;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.exception.*;
+import org.jazzteam.roboworld.model.bean.tracker.Tracker;
 import org.jazzteam.roboworld.output.OutputWriter;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class RecreaterOperator extends AbstractOperator {
+    private List<Tracker> trackers = new ArrayList<>();
     private boolean recreate = true;
 
     public RecreaterOperator(){
@@ -28,7 +32,13 @@ public class RecreaterOperator extends AbstractOperator {
     }
 
     public Robot createRobot(RobotType type, String name) throws RobotAlreadyExistException{
-        return createRobot(type, name, false);
+        Robot robot;
+        if(name == null || (name = name.trim()).isEmpty()){
+            robot = createRobot(type);
+        } else {
+            robot = createRobot(type, name, false);
+        }
+        return robot;
     }
 
     public Robot createRobot(RobotType type) {
@@ -43,6 +53,9 @@ public class RecreaterOperator extends AbstractOperator {
     }
 
     private Robot createRobot(RobotType type, String name, boolean withReplacement) throws RobotAlreadyExistException{
+        if(type == null){
+            throw new NullPointerException(Constants.ROBOT_TYPE_IS_NULL);
+        }
         Robot robot = type.getRobot();
         if(name != null){
             robot.setName(name);
@@ -58,8 +71,8 @@ public class RecreaterOperator extends AbstractOperator {
         return robot;
     }
 
-    public void broadcastTask(Task task, RobotType type){
-        SharedBoard.getBoard(type).add(task);
+    public boolean broadcastTask(Task task){
+        boolean success = SharedBoard.getInstance().put(task);
         getRobots().forEach((name, robot) -> {
             try{
                 robot.wakeUp();
@@ -69,35 +82,28 @@ public class RecreaterOperator extends AbstractOperator {
                 }
             }
         });
+        RobotType type = RobotType.identifyRobotType(task);
+        trackers.forEach(tracker -> tracker.control(type));
+        return success;
     }
 
-    public void broadcastTask(Task task){
-        broadcastTask(task, RobotType.GENERAL);
-    }
-
-    public void assignTask(Task task, Robot robot){
-        if(robot == null){
-            throw new NullPointerException(Constants.ROBOT_IS_NULL);
-        }
-        assignTask(task, robot.getName());
-    }
-
-    public void assignTask(Task task, String nameOfRobot){
+    public boolean assignTask(Task task, String robotName){
         if(task == null){
             throw new TaskIsNullException();
         }
-        Robot robot = get(nameOfRobot);
+        Robot robot = get(robotName);
         if(robot == null){
-            throw new RobotNotFoundException(nameOfRobot);
+            throw new RobotNotFoundException(robotName);
         }
         if(!recreate && robot.isDie()){
             remove(robot.getName());
             throw new RobotDeadException(robot);
         }
-        tryAssignTask(task, robot);
+        return tryAssignTask(task, robot);
     }
 
-    private void tryAssignTask(Task task, Robot robot){
+    private boolean tryAssignTask(Task task, Robot robot){
+        boolean success = false;
         try{
             if(recreate && robot.isDie()){
                 try{
@@ -109,9 +115,18 @@ public class RecreaterOperator extends AbstractOperator {
             }
             robot.addTask(task);
             robot.wakeUp();
+            success = true;
         } catch(RobotDeadException e){
             tryAssignTask(task, robot);
         }
+        return success;
+    }
+
+    public boolean addTracker(Tracker tracker){
+        if(tracker == null){
+            throw new NullPointerException(Constants.TRACKER_IS_NULL);
+        }
+        return trackers.add(tracker);
     }
 
     private static String getRandomName(){

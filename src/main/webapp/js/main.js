@@ -18,6 +18,7 @@ var QUERY_PARAMETER = "?need=";
 
 var ID_SELECT_TASK_ELEMENT = "taskNames";
 var ID_SELECT_ROBOT_ELEMENT = "robotNames";
+var NAME_FOR_ROBOT_TYPE_KEY = "robotType";
 var OPTGROUP_TAG = "optgroup";
 var OPTGROUP_LABEL = "label";
 var OPTGROUP_LABEL_NAMES = {
@@ -33,6 +34,7 @@ var ADDITIONAL_TASKS_LABEL = SPACE + NEED_TASKS;
 var ADDITIONAL_ROBOTS_LABEL = SPACE + NEED_ROBOTS;
 var OPTION_TAG = "option";
 var VALUE = "value";
+var jsonDataTasks;
 
 function init(need) {
     var form = document.getElementById(GIVE_TASK_FORM_ID);
@@ -47,6 +49,9 @@ function init(need) {
         if(this.status === 200){
             hideErrorMessage(form);
             var data = JSON.parse(this.responseText);
+            if(need === NEED_TASKS){
+                jsonDataTasks = data;
+            }
             showInSelect(need, data);
         } else {
             showErrorMessage(this, form);
@@ -155,7 +160,8 @@ function createRobotOrTask(name) {
             break;
     }
     var inputText = form.querySelectorAll(INPUT_TYPE_TEXT)[0];
-    var xhr = sendPost(form);
+    var body = parseForm(form);
+    var xhr = sendPost(body);
     inputText.value = EMPTY;
 
     xhr.addEventListener(READY_STATE_CHANGE, function(){
@@ -172,7 +178,10 @@ function createRobotOrTask(name) {
 function parseForm(form) {
     result = parseElement(form, 'input');
     var select = parseElement(form, 'select');
-    return result + (select ? '&':EMPTY) + select;
+    if(result.length > 0 && select.length > 0){
+        result += "&" + select;
+    }
+    return result;
 }
 
 function parseElement(form, element){
@@ -182,20 +191,36 @@ function parseElement(form, element){
         if(elem.type === 'checkbox' && elem.checked === false){
             continue;
         }
-        if(result.length > 0){
-            result += "&";
-        }
-        result += elem.name + "=" + encodeURIComponent(elem.value);
+        result = appendToQuery(result, elem.name, elem.value);
     }
     return result;
 }
 
+function appendToQuery(query, key, value){
+    if(query === undefined || query === null){
+        query = EMPTY;
+    }
+    if(query.length > 0){
+        query += "&";
+    }
+    return query += key + "=" + encodeURIComponent(value);
+}
+
 //                      for challenge
+
+var ROBOT_TYPES_NAME = {
+    "BACK_END_DEVELOPER":"back",
+    "FRONT_END_DEVELOPER":"front",
+    "HR":"hr",
+    "GENERAL":"general"
+}
 
 function challenge() {
     var form = document.getElementById(GIVE_TASK_FORM_ID);
-    var xhr = sendPost(form);
-
+    var body = parseForm(form);
+    var robotType = findRobotType(form);
+    var body = appendToQuery(body, NAME_FOR_ROBOT_TYPE_KEY, robotType);
+    var xhr = sendPost(body);
     xhr.addEventListener(READY_STATE_CHANGE, function(){
         if(this.readyState !== 4) return;
         if(this.status === 200){
@@ -206,12 +231,24 @@ function challenge() {
     });
 }
 
-function sendPost(form) {
+function findRobotType(form){
+    var result = "";
+    var select = form.querySelectorAll(['select[name="taskName"]'])[0];
+    var taskName = select.value;
+    for(var type in jsonDataTasks){
+        var task = jsonDataTasks[type][taskName];
+        if(task !== undefined && task !== null){
+            result = ROBOT_TYPES_NAME[type];
+        }
+    }
+    return result;
+}
+
+function sendPost(body) {
     var xhr = new XMLHttpRequest();
     xhr.open(POST_METHOD, URL, true);
     xhr.setRequestHeader(HEADER_KEY_AJAX, HEADER_VALUE_AJAX);
     xhr.setRequestHeader(HEADER_KEY_CONTENT_TYPE, HEADER_VALUE_CONTENT_TYPE);
-    var body = parseForm(form);
     xhr.send(body);
     return xhr;
 }

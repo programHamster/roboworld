@@ -6,6 +6,9 @@ import org.jazzteam.roboworld.exception.unsupported.UnsupportedCommandException;
 
 public abstract class CommandFactory {
     public static Command getCommandFromFactory(String commandName) throws UnsupportedCommandException{
+        if(commandName == null){
+            throw new NullPointerException(org.jazzteam.roboworld.exception.Constants.COMMAND_IS_NULL);
+        }
         switch(commandName){
             case Constants.COMMAND_CREATE_ROBOT:
                 return Command.CREATE_ROBOT;

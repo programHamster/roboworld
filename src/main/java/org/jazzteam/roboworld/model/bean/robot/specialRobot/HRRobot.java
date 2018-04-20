@@ -1,9 +1,9 @@
 package org.jazzteam.roboworld.model.bean.robot.specialRobot;
 
-import org.jazzteam.roboworld.model.bean.robot.DocileSpecialRobot;
+import org.jazzteam.roboworld.model.bean.robot.AbstractSpecialRobot;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 
-public class HRRobot extends DocileSpecialRobot {
+public class HRRobot extends AbstractSpecialRobot {
 
     public RobotType getRobotType(){
         return RobotType.HR;

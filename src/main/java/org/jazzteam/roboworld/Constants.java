@@ -33,10 +33,13 @@ public abstract class Constants {
     public static final String INIT_PARAM_VALUE_WEB_SOCKET_OUTPUT = "webSocket";
     public static final String INIT_PARAM_VALUE_SYSTEM = "system";
     public static final String INIT_PARAM_NAME_OPERATOR = "operator";
-    public static final String INIT_PARAM_VALUE_OPERATOR_PERFORMANCE = "monitoring performance";
+    public static final String INIT_PARAM_NAME_TRACKER = "tracker";
     public static final String INIT_PARAM_VALUE_OPERATOR_RECREATOR = "recreator";
-    public static final String INIT_PARAM_NAME_ADDITION_PARAMS = "addition param";
-    public static final String INIT_PARAM_VALUE_ADDITION_PARAMS = "5000";
+    public static final String INIT_PARAM_VALUE_TRACKER_PERFORMANCE = "performance";
+    public static final String INIT_PARAM_NAME_OPERATOR_ADDITION_PARAM = "operator addition param";
+    public static final String INIT_PARAM_NAME_TRACKER_ADDITION_PARAM = "tracker addition param";
+    public static final String INIT_PARAM_VALUE_OPERATOR_ADDITION_PARAM = "true";
+    public static final String INIT_PARAM_VALUE_TRACKER_DEFAULT_PERIOD = "5000";
     public static final int ERROR_STATUS_CODE = 500;
     public static final String HEADER_KEY_JSON = "Content-Type";
     public static final String HEADER_VALUE_JSON = "application/json";

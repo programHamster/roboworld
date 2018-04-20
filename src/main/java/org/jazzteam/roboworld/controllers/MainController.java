@@ -8,6 +8,7 @@ import org.jazzteam.roboworld.model.bean.task.TaskHolder;
 import org.jazzteam.roboworld.exception.unsupported.UnsupportedException;
 import org.jazzteam.roboworld.model.facroty.CommandFactory;
 import org.jazzteam.roboworld.model.facroty.OperatorFactory;
+import org.jazzteam.roboworld.model.facroty.TrackerFactory;
 import org.jazzteam.roboworld.output.OutputWriter;
 
 import javax.servlet.ServletConfig;
@@ -23,9 +24,11 @@ import java.util.Map;
 @WebServlet(urlPatterns = Constants.MAIN_URL,
     initParams = {
         @WebInitParam(name = Constants.INIT_PARAM_NAME_OUTPUT, value = Constants.INIT_PARAM_VALUE_WEB_SOCKET_OUTPUT),
-        @WebInitParam(name = Constants.INIT_PARAM_NAME_OPERATOR, value = Constants.INIT_PARAM_VALUE_OPERATOR_PERFORMANCE),
+        @WebInitParam(name = Constants.INIT_PARAM_NAME_OPERATOR, value = Constants.INIT_PARAM_VALUE_OPERATOR_RECREATOR),
             // if you want to pass more parameters, specify them separated by commas in the next parameter
-        @WebInitParam(name = Constants.INIT_PARAM_NAME_ADDITION_PARAMS, value = Constants.INIT_PARAM_VALUE_ADDITION_PARAMS)
+        @WebInitParam(name = Constants.INIT_PARAM_NAME_OPERATOR_ADDITION_PARAM, value = Constants.INIT_PARAM_VALUE_OPERATOR_ADDITION_PARAM),
+        @WebInitParam(name = Constants.INIT_PARAM_NAME_TRACKER, value = Constants.INIT_PARAM_VALUE_TRACKER_PERFORMANCE),
+        @WebInitParam(name = Constants.INIT_PARAM_NAME_TRACKER_ADDITION_PARAM, value = Constants.INIT_PARAM_VALUE_TRACKER_DEFAULT_PERIOD),
     })
 public class MainController extends HttpServlet {
     private static Operator operator;
@@ -35,8 +38,11 @@ public class MainController extends HttpServlet {
         try {
             super.init(config);
             String operatorName = config.getInitParameter(Constants.INIT_PARAM_NAME_OPERATOR);
-            String additionParameters = config.getInitParameter(Constants.INIT_PARAM_NAME_ADDITION_PARAMS);
-            operator = OperatorFactory.getOperatorFromFactory(operatorName, additionParameters);
+            String operatorAdditionParams = config.getInitParameter(Constants.INIT_PARAM_NAME_OPERATOR_ADDITION_PARAM);
+            operator = OperatorFactory.getOperatorFromFactory(operatorName, operatorAdditionParams);
+            String trackerName = config.getInitParameter(Constants.INIT_PARAM_NAME_TRACKER);
+            String trackerAdditionParams = config.getInitParameter(Constants.INIT_PARAM_NAME_TRACKER_ADDITION_PARAM);
+            operator.addTracker(TrackerFactory.getTrackerFromFactory(trackerName, trackerAdditionParams, operator));
             String outputName = config.getInitParameter(Constants.INIT_PARAM_NAME_OUTPUT);
             OutputWriter.installOutput(outputName);
         } catch (Exception e) {

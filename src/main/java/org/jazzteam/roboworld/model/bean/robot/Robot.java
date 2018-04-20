@@ -7,7 +7,7 @@ public interface Robot {
     void start();
     void setName(String name);
     String getName();
-    void addTask(Task task);
+    boolean addTask(Task task);
     void wakeUp();
     boolean isAlive();
     boolean isRunning();

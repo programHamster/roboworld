@@ -10,9 +10,9 @@ public class TaskBoard<T extends Task> implements Board<T> {
     // chose LinkedBlockingQueue because it has two locks.
     private final BlockingQueue<T> tasks = new LinkedBlockingQueue<>();
 
-    public void add(T task){
+    public boolean add(T task){
         checkTask(task);
-        tasks.add(task);
+        return tasks.add(task);
     }
 
     public T poll(){

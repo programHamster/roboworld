@@ -1,11 +1,9 @@
 package org.jazzteam.roboworld.model.bean.task;
 
-import org.jazzteam.roboworld.model.bean.task.generalTask.GeneralTaskIdentifier;
-import org.jazzteam.roboworld.model.bean.task.specialTask.BackEndTask;
-import org.jazzteam.roboworld.model.bean.task.specialTask.FrontEndTask;
-import org.jazzteam.roboworld.model.bean.task.specialTask.HRTask;
 import org.jazzteam.roboworld.exception.Constants;
+import org.jazzteam.roboworld.exception.notSpecified.RobotTypeNotSpecifiedException;
 import org.jazzteam.roboworld.exception.TaskIsNullException;
+import org.jazzteam.roboworld.exception.notSpecified.TaskNameNotSpecifiedException;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 
 import java.util.Collections;
@@ -40,20 +38,17 @@ public class TaskHolder {
             throw new TaskIsNullException(Constants.TASK_IS_NULL);
         }
         String taskName = task.getName();
-        if(task instanceof BackEndTask){
-            allTasks.get(RobotType.BACK_END_DEVELOPER).put(taskName, task);
-        } else if(task instanceof FrontEndTask){
-            allTasks.get(RobotType.FRONT_END_DEVELOPER).put(taskName, task);
-        } else if(task instanceof HRTask){
-            allTasks.get(RobotType.HR).put(taskName, task);
-        } else if(GeneralTaskIdentifier.isGeneralTask(task)){
-            allTasks.get(RobotType.GENERAL).put(taskName, task);
-        } else {
-            throw new IllegalArgumentException(Constants.UNKNOWN_TASK_TYPE);
-        }
+        RobotType type = RobotType.identifyRobotType(task);
+        allTasks.get(type).put(taskName, task);
     }
 
     public Task getTask(String taskName, RobotType type){
+        if(taskName == null || taskName.isEmpty()){
+            throw new TaskNameNotSpecifiedException();
+        }
+        if(type == null){
+            throw new RobotTypeNotSpecifiedException();
+        }
         Task task = allTasks.get(type).get(taskName);
         if(task == null){
             task = allTasks.get(RobotType.GENERAL).get(taskName);

@@ -2,17 +2,12 @@ package org.jazzteam.roboworld.exception;
 
 public class TaskNotFoundException extends RuntimeException {
     private String taskName;
-    private String additionalMessage;
 
     public TaskNotFoundException() {
         super();
     }
     public TaskNotFoundException(String taskName) {
         this.taskName = taskName;
-    }
-    public TaskNotFoundException(String taskName, String additionalMessage) {
-        this.taskName = taskName;
-        this.additionalMessage = additionalMessage;
     }
     public TaskNotFoundException(String message, Throwable cause) {
         super(message, cause);
@@ -30,9 +25,6 @@ public class TaskNotFoundException extends RuntimeException {
         String message;
         if(taskName != null){
             message = "task named \"" + taskName + "\" is not found";
-            if(additionalMessage != null){
-                message += additionalMessage;
-            }
         } else {
             message = super.getMessage();
         }

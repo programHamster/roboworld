@@ -50,20 +50,13 @@
             <button type="button" id="buttonCreateTask" onclick="createRobotOrTask('task')">create</button>
         </form>
         <hr/>
-        Assign task :
+        Broadcast the task :
         <form name="giveTask" id="formGiveTask" method="post" action="main" >
             <br>
             <input type="hidden" name="<%=Constants.PARAM_NAME_COMMAND%>" value="<%=Constants.COMMAND_GIVE_TASK%>">
             Select the task
             <select name="<%=Constants.PARAM_NAME_TASK_NAME%>" id="taskNames" required></select>
             <script>init("<%=Constants.PARAM_VALUE_TASKS_INIT%>")</script>
-            Select the type of robot
-            <select name="<%=Constants.PARAM_NAME_ROBOT_TYPE%>" required>
-                <option selected value="<%=Constants.BACK_END_ROBOT_VALUE%>">back-end developer</option>
-                <option value="<%=Constants.FRONT_END_ROBOT_VALUE%>">front-end developer</option>
-                <option value="<%=Constants.HR_ROBOT_VALUE%>">HR</option>
-                <option value="<%=Constants.GENERAL_ROBOT_VALUE%>">general</option>
-            </select>
             assign to a particular robot(optional)
             <input type="checkbox" id="checkboxRobotNames" name="<%=Constants.PARAM_NAME_CHECKBOX%>"
                    value="<%=Constants.PARAM_VALUE_CHECKBOX%>" onchange="hideRobotName()">

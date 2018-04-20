@@ -2,6 +2,8 @@ package org.jazzteam.roboworld.model.bean.task;
 
 import org.jazzteam.roboworld.Constants;
 
+import java.util.Objects;
+
 public abstract class AbstractTask implements Task {
     private static int commonId;
     private final int ID;
@@ -28,4 +30,27 @@ public abstract class AbstractTask implements Task {
     public int getId(){
         return ID;
     }
+
+    public String toString(){
+        return "Task" + ID + ";" + name;
+    }
+
+    public boolean equals(Object o){
+        if(o == null){
+            return false;
+        }
+        if(o == this){
+            return true;
+        }
+        if(!(o instanceof AbstractTask)){
+            return false;
+        }
+        AbstractTask task = (AbstractTask)o;
+        return task.ID == ID && task.name.equals(name);
+    }
+
+    public int hashCode(){
+        return Objects.hash(name, ID);
+    }
+
 }
