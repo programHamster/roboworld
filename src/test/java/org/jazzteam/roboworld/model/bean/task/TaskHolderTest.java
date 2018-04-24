@@ -10,8 +10,9 @@ import org.jazzteam.roboworld.model.facroty.Constants;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 import org.junit.Test;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 import static org.junit.Assert.*;
 
@@ -21,15 +22,32 @@ public class TaskHolderTest {
     @Test
     public void getInstance_checkConcurrent() throws InterruptedException, ExecutionException  {
         // arrange
-        CompletableFuture<TaskHolder> firstFuture = CompletableFuture.supplyAsync(TaskHolder::getInstance);
-        CompletableFuture<TaskHolder> secondFuture = CompletableFuture.supplyAsync(TaskHolder::getInstance);
+        int numberThreads = 5;
+        ExecutorService executor = Executors.newFixedThreadPool(numberThreads);
+        List<Callable<TaskHolder>> callables = new ArrayList<>(numberThreads);
+        final boolean[] result = new boolean[1];
+        result[0] = true;
+        for(int i=0; i<numberThreads; i++){
+            callables.add(TaskHolder::getInstance);
+        }
         // act
-        TaskHolder firstResult = firstFuture.get();
-        TaskHolder secondResult = secondFuture.get();
+        List<Future<TaskHolder>> futures = executor.invokeAll(callables);
+        futures.stream().map(future -> {
+            TaskHolder holder = null;
+            try {
+                holder = future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return holder;
+        }).reduce((holder1, holder2) -> {
+            if(holder1 == null || holder2 == null || holder1 != holder2){
+                result[0] = false;
+            }
+            return holder2;
+        });
         // assert
-        assertNotNull(firstResult);
-        assertNotNull(secondResult);
-        assertTrue(firstResult == secondResult);
+        assertTrue(result[0]);
     }
 
     @Test
@@ -68,4 +86,17 @@ public class TaskHolderTest {
         HOLDER.getTask(Constants.SOME_NAME, null);
     }
 
+    @Test
+    public void totalSearch() {
+        // arrange
+        Task task = new BackEndTask();
+        Task result;
+        // act
+        synchronized (HOLDER){
+            HOLDER.putTask(task);
+            result = HOLDER.totalSearch(task.getName());
+        }
+        // assert
+        assertEquals(task, result);
+    }
 }

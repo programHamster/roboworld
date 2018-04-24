@@ -33,7 +33,7 @@ public class RobotDeadException extends RuntimeException {
     public String getMessage(){
         String message;
         if(robot != null){
-            message = "the robot named \"" + robot.getName() + "\" is dead";
+            message = "The robot named \"" + robot.getName() + "\" is dead";
         } else {
             message = super.getMessage();
         }

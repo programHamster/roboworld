@@ -7,31 +7,69 @@ import org.jazzteam.roboworld.exception.*;
 import org.jazzteam.roboworld.model.bean.tracker.Tracker;
 import org.jazzteam.roboworld.output.OutputWriter;
 import org.jazzteam.roboworld.model.facroty.RobotType;
+import org.jazzteam.roboworld.output.RoboWorldEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This is operator capable of recreating robots in the event of their death.
+ * This ability is enabled by default.
+ */
 public class RecreaterOperator extends AbstractOperator {
+    /** The tracker for controlling robots */
     private List<Tracker> trackers = new ArrayList<>();
+    /** the flag responsible for the recreating of the robots */
     private boolean recreate = true;
 
+    /**
+     * This is default constructor.
+     */
     public RecreaterOperator(){
     }
 
+    /**
+     * This constructor sets the ability to recreate robots.
+     *
+     * @param recreateOfRobot pass <code>false</code> for turn off the recreate
+     */
     public RecreaterOperator(boolean recreateOfRobot){
         this.recreate = recreateOfRobot;
     }
 
+    /**
+     * Returns the mode of recreating robots.
+     *
+     * @return the mode of recreating robots
+     */
     public boolean isRecreateRobot() {
         return recreate;
     }
 
+    /**
+     * Sets the mode of recreating robots.
+     *
+     * @param recreateRobot the flag responsible for the recreating of the robots
+     */
     public void setRecreateRobot(boolean recreateRobot) {
         this.recreate = recreateRobot;
     }
 
-    public Robot createRobot(RobotType type, String name) throws RobotAlreadyExistException{
+    /**
+     * Creates and returns a new robot of the specified type. The created robot will
+     * be started immediately. The name is set according to the specified. If the
+     * specified name is {@code null} or empty, a unique random name will be generated.
+     * If the robot with the specified name is already under the control of operator, the
+     * {@code RobotAlreadyExistException} will be thrown.
+     *
+     * @param type type of the robot
+     * @param name name of the robot
+     * @return a new robot
+     * @throws RobotAlreadyExistException if the robot with the specified name is
+     *                                    already under the control of operator
+     */
+    public Robot createRobot(RobotType type, String name) {
         Robot robot;
         if(name == null || (name = name.trim()).isEmpty()){
             robot = createRobot(type);
@@ -41,6 +79,13 @@ public class RecreaterOperator extends AbstractOperator {
         return robot;
     }
 
+    /**
+     * Creates and returns a new robot of the specified type. The created robot will
+     * be started immediately. The name for a new robot will be generated automatically.
+     *
+     * @param type type of the robot
+     * @return a new robot
+     */
     public Robot createRobot(RobotType type) {
         Robot robot;
         try {
@@ -52,7 +97,23 @@ public class RecreaterOperator extends AbstractOperator {
         return robot;
     }
 
-    private Robot createRobot(RobotType type, String name, boolean withReplacement) throws RobotAlreadyExistException{
+    /**
+     * this is a common method for creating robots. If the flag <code>withReplacement</code>
+     * is <code>false</code> and a robot with the same name already exists, then the
+     * {@code RobotAlreadyExistException} will be thrown.
+     *
+     * @param type type of the robot
+     * @param name robot name
+     * @param withReplacement if pass <code>true</code>, then if a robot with the same name
+     *                       already exists, it will be replaced. if pass <code>false</code>,
+     *                       then if a robot with the same name already exists, an exception
+     *                       will be thrown
+     * @return {@code null} if operator does not have a robot with the specified name and if
+     *                      the robot with this name exists, the old robot will be returned
+     * @throws RobotAlreadyExistException if robot with the specified name exists and flag
+     *                                      <code>withReplacement</code> is <code>false</code>
+     */
+    private Robot createRobot(RobotType type, String name, boolean withReplacement) {
         if(type == null){
             throw new NullPointerException(Constants.ROBOT_TYPE_IS_NULL);
         }
@@ -71,6 +132,19 @@ public class RecreaterOperator extends AbstractOperator {
         return robot;
     }
 
+    /**
+     * Broadcasts about the need to perform the specified task and returns <code>true</code>
+     * if the task is assigned. Any robot of the appropriate type (capable of doing it) should
+     * begin to perform it. If a robot necessary type don't exist (and tracker is not installed
+     * to control them) the task will hang in the queue until the required robot will be created.
+     *
+     * Also in this method, the operator outputs robots from sleep mode and recreates them as
+     * needed. The tracker also come in to action.
+     *
+     * @param task the assigned task
+     * @return <code>true</code> if the task is assigned and <code>false</code> otherwise
+     * @throws TaskIsNullException if the specified task is null
+     */
     public boolean broadcastTask(Task task){
         boolean success = SharedBoard.getInstance().put(task);
         getRobots().forEach((name, robot) -> {
@@ -79,6 +153,10 @@ public class RecreaterOperator extends AbstractOperator {
             } catch(RobotDeadException e){
                 if(recreate){
                     createRobot(robot.getRobotType(), robot.getName(), true);
+                    OutputWriter.write("Robot \"" + robot.getName() + "\" is recreated");
+                } else {
+                    remove(robot.getName());
+                    OutputWriter.write("Robot \"" + robot.getName() + "\" is removed", RoboWorldEvent.ROBOT);
                 }
             }
         });
@@ -87,6 +165,17 @@ public class RecreaterOperator extends AbstractOperator {
         return success;
     }
 
+    /**
+     * Assigns the specified task to the robot with the specified name and returns confirmation.
+     *
+     * @param task the assigned task
+     * @param robotName name of the robot
+     * @return <code>true</code> if the task is assigned and <code>false</code> otherwise
+     * @throws TaskIsNullException if the task is {@code null}
+     * @throws RobotNotFoundException if the robot with the specified name is not found
+     * @throws RobotDeadException if the robot with the specified name is dead
+     *                              and the recreate mode is turn off
+     */
     public boolean assignTask(Task task, String robotName){
         if(task == null){
             throw new TaskIsNullException();
@@ -95,22 +184,34 @@ public class RecreaterOperator extends AbstractOperator {
         if(robot == null){
             throw new RobotNotFoundException(robotName);
         }
-        if(!recreate && robot.isDie()){
-            remove(robot.getName());
+        if(!tryAssignTask(task, robot)){
             throw new RobotDeadException(robot);
         }
-        return tryAssignTask(task, robot);
+        return true;
     }
 
+    /**
+     * This method tries to assign a task to a robot and, if necessary, recreate it. If the recreate mod
+     * is off, the robot will be removed and returns <code>false</code>.
+     *
+     * @param task assigned task
+     * @param robot the robot to which the task is assigned
+     * @return <code>true</code> if the task is assigned and <code>false</code> if robot is dead
+     */
     private boolean tryAssignTask(Task task, Robot robot){
         boolean success = false;
         try{
-            if(recreate && robot.isDie()){
-                try{
-                    robot = createRobot(robot.getRobotType(), robot.getName(), true);
-                    OutputWriter.write("Robot \"" + robot.getName() + "\" is recreated");
-                } catch(RobotAlreadyExistException e){
-                    // never happen
+            if(robot.isDie()){
+                if(recreate){
+                    try{
+                        robot = createRobot(robot.getRobotType(), robot.getName(), true);
+                        OutputWriter.write("Robot \"" + robot.getName() + "\" is recreated");
+                    } catch(RobotAlreadyExistException e){
+                        // never happen
+                    }
+                } else {
+                    remove(robot.getName());
+                    return false;
                 }
             }
             robot.addTask(task);
@@ -122,6 +223,13 @@ public class RecreaterOperator extends AbstractOperator {
         return success;
     }
 
+    /**
+     * Adds a tracker to monitor robots and returns confirmation of its installation.
+     *
+     * @param tracker tracker added for monitoring
+     * @return <code>true</code> if tracker added and <code>false</code> otherwise
+     * @throws NullPointerException if the tracker in {@code null}
+     */
     public boolean addTracker(Tracker tracker){
         if(tracker == null){
             throw new NullPointerException(Constants.TRACKER_IS_NULL);
@@ -129,6 +237,11 @@ public class RecreaterOperator extends AbstractOperator {
         return trackers.add(tracker);
     }
 
+    /**
+     * Returns the generated random name. Its length is @{code LENGTH_NAME}.
+     *
+     * @return the generated random name
+     */
     private static String getRandomName(){
         final int LENGTH_NAME = 5;
         String uuid = UUID.randomUUID().toString().replaceAll(org.jazzteam.roboworld.

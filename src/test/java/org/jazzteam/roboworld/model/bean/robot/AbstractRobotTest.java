@@ -229,7 +229,7 @@ public class AbstractRobotTest {
         Task task = new BackEndTask();
         robot.addTask(task);
         // assert
-        assertEquals(robot.removeTask(), task);
+        assertEquals(robot.pollTask(), task);
     }
 
     @Test
@@ -237,7 +237,7 @@ public class AbstractRobotTest {
         // arrange
         AbstractRobot robot = new BackEndDeveloperRobot();
         // assert
-        assertEquals(robot.removeTask(), null);
+        assertEquals(robot.pollTask(), null);
     }
 
     @Test(expected = RobotDeadException.class)
@@ -247,7 +247,7 @@ public class AbstractRobotTest {
         // act
         robot.shutdown();
         // assert
-        robot.removeTask();
+        robot.pollTask();
     }
 
     @Test(expected = RobotDeadException.class)

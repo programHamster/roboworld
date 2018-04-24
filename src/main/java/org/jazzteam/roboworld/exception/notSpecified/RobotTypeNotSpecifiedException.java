@@ -2,6 +2,9 @@ package org.jazzteam.roboworld.exception.notSpecified;
 
 import org.jazzteam.roboworld.exception.Constants;
 
+/**
+ * Used when specifying an incorrect type of robot.
+ */
 public class RobotTypeNotSpecifiedException extends RuntimeException {
     public RobotTypeNotSpecifiedException() {
         super();

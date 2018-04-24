@@ -3,30 +3,60 @@ package org.jazzteam.roboworld.model.bean.task;
 import org.jazzteam.roboworld.Constants;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * This class describes common actions specific to each task.
+ */
 public abstract class AbstractTask implements Task {
-    private static int commonId;
+    /** the total task count */
+    private static volatile AtomicInteger totalCount = new AtomicInteger();
+    /** task id */
     private final int ID;
+    /** task name */
     private String name;
 
+    /**
+     * The constructor initialises the task ID and name.
+     */
     public AbstractTask() {
-        ID = commonId++;
+        ID = totalCount.incrementAndGet();
         name = Constants.TASK + ID;
     }
 
+    /**
+     * The constructor initialises the task with the specified name.
+     *
+     * @param name task name
+     */
     public AbstractTask(String name){
         this();
         this.name = name;
     }
 
+    /**
+     * Returns the name of the task.
+     *
+     * @return task name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the task to the specified name.
+     *
+     * @param name a new name for the task
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Returns the unique ID of the task.
+     *
+     * @return the unique ID of the task
+     */
     public int getId(){
         return ID;
     }

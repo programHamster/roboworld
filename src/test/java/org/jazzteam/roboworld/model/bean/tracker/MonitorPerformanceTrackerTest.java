@@ -1,5 +1,6 @@
 package org.jazzteam.roboworld.model.bean.tracker;
 
+import org.jazzteam.roboworld.exception.notSpecified.RobotTypeNotSpecifiedException;
 import org.jazzteam.roboworld.model.bean.operator.Operator;
 import org.jazzteam.roboworld.model.bean.operator.RecreaterOperator;
 import org.jazzteam.roboworld.model.bean.task.Task;
@@ -24,7 +25,7 @@ public class MonitorPerformanceTrackerTest {
         new MonitorPerformanceTracker(null, 1);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = RobotTypeNotSpecifiedException.class)
     public void control_null(){
         // arrange
         Tracker tracker = new MonitorPerformanceTracker(operator, 1);
@@ -32,12 +33,12 @@ public class MonitorPerformanceTrackerTest {
         tracker.control(null);
     }
 
-    @Test(timeout = 1000)
+    @Test//(timeout = 1000)
     public void control() {
         // arrange
         RobotType testType = RobotType.BACK_END_DEVELOPER;
         operator.createRobot(testType);
-        int numberRobotsBefore = operator.countRobots(testType);
+        int numberRobotsBefore = operator.numberRobots(testType);
         Task task = new BackEndTask();
         // act
         for(int i=0; i<3; i++){
@@ -48,8 +49,9 @@ public class MonitorPerformanceTrackerTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        int numberRobotsAfter = operator.countRobots(testType);
+        int numberRobotsAfter = operator.numberRobots(testType);
         // assert
         assertTrue(numberRobotsAfter > numberRobotsBefore);
     }
+
 }

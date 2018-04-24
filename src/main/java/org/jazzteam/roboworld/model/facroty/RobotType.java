@@ -11,6 +11,10 @@ import org.jazzteam.roboworld.model.bean.task.specialTask.BackEndTask;
 import org.jazzteam.roboworld.model.bean.task.specialTask.FrontEndTask;
 import org.jazzteam.roboworld.model.bean.task.specialTask.HRTask;
 
+/**
+ * This enum describes the available implementations of robots. Each implementation of robot must
+ * define classes (superclasses) of tasks with which it can work.
+ */
 public enum RobotType {
     BACK_END_DEVELOPER{
         public Class<?>[] getFeasibleTasks(){
@@ -41,11 +45,27 @@ public enum RobotType {
             return new GeneralRobot();
         }
     };
-    protected Robot robot;
 
+    /**
+     * Returns an array of classes (superclasses) that the robot can perform.
+     *
+     * @return an array of classes (superclasses) that the robot can perform
+     */
     public abstract Class<?>[] getFeasibleTasks();
+
+    /**
+     * Returns a particular robot implementation.
+     *
+     * @return a particular robot implementation
+     */
     public abstract Robot getRobot();
 
+    /**
+     * Returns the type of robot capable of performing the specified task.
+     *
+     * @param task task
+     * @return the type of robot capable of performing the specified task
+     */
     public static RobotType identifyRobotType(Task task){
         if(task == null){
             throw new TaskIsNullException();

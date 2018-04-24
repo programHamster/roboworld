@@ -4,7 +4,19 @@ import org.jazzteam.roboworld.Constants;
 import org.jazzteam.roboworld.exception.notSpecified.RobotTypeNotSpecifiedException;
 import org.jazzteam.roboworld.exception.unsupported.UnsupportedRobotTypeException;
 
+/**
+ * This factory is designed to determine the particular type of robot by its name.
+ */
 public abstract class RobotTypeFactory {
+
+    /**
+     * returns a robot type by the specified name.
+     *
+     * @param robotType name of the robot type
+     * @return a robot type by the specified name
+     * @throws UnsupportedRobotTypeException if the specified robot name is wrong
+     * @throws RobotTypeNotSpecifiedException if the specified name of the robot is <code>null</code>
+     */
     public static RobotType getRobotTypeFromFactory(String robotType) throws UnsupportedRobotTypeException{
         if(robotType == null || robotType.isEmpty()){
             throw new RobotTypeNotSpecifiedException();

@@ -273,10 +273,6 @@ function connect () {
         var message = extractKey(event.data);
         showMessage(message);
     };
-
-    chatClient.onerror = function (event) {
-        showMessage(event.message, true);
-    }
 }
 
 function disconnect () {
@@ -305,11 +301,8 @@ function extractKey(message){
     return message;
 }
 
-function showMessage(message, isError) {
+function showMessage(message) {
     var messageElement = document.createElement(P_TAG);
-    if(isError){
-        messageElement.style.color = ERROR_COLOR;
-    }
     messageElement.innerText = message;
     MESSAGES_BLOCK.appendChild(messageElement);
 }

@@ -8,12 +8,26 @@ import javax.websocket.Session;
 import java.io.IOException;
 import java.util.Set;
 
+/**
+ * This class is used to display information about what is happening in the game world.
+ * The default way to display information is the console ({@code System.out.println()}.
+ * For change the way information is displayed, you must implement it in method {@code write(String message)}
+ * and associate it with a specific name.
+ */
 public abstract class OutputWriter {
-    // default value
+    /** The default way to display information */
     private static String outputName = Constants.INIT_PARAM_VALUE_SYSTEM;
+    /** stores of the endpoint for all subscribed users */
     private static ChatEndpoint chat;
 
-    public static void installOutput(String outputName) throws InstantiationException{
+    /**
+     * Installs the way information is displayed. If web socket output is set, the endpoint reference
+     * is initialized.
+     *
+     * @param outputName output name
+     * @throws NullPointerException if the specified output name is <code>null</code>
+     */
+    public static void installOutput(String outputName) {
         if(outputName == null){
             throw new NullPointerException(org.jazzteam.roboworld.exception.Constants.OUTPUT_NAME_IS_NULL);
         }
@@ -23,10 +37,16 @@ public abstract class OutputWriter {
         }
     }
 
+    /**
+     * Sends the message to the installed output.
+     *
+     * @param message message to output
+     * @throws IllegalArgumentException if the output name is not associated with the output way
+     */
     public static void write(String message){
         switch (outputName){
             case Constants.INIT_PARAM_VALUE_WEB_SOCKET_OUTPUT:
-                if(chat != null){
+                if(chat != null && !Thread.interrupted()){
                     Set<Session> sessions = chat.getUserSessions();
                     sessions.forEach(session -> {
                         try {
@@ -45,6 +65,15 @@ public abstract class OutputWriter {
         }
     }
 
+    /**
+     * Adds the specified event key to the message and sends it to the output. If the status or number of robots
+     * or tasks changed, necessary specify the appropriate event to trigger data refresh on the client side.
+     *
+     * @param message message to output
+     * @param event event occurred in the game world
+     * @throws NullPointerException if the specified event is <code>null</code>
+     * @throws IllegalArgumentException if the output name is not associated with the output way
+     */
     public static void write(String message, RoboWorldEvent event){
         if(event == null){
             throw new NullPointerException(org.jazzteam.roboworld.exception.Constants.EVENT_IS_NULL);

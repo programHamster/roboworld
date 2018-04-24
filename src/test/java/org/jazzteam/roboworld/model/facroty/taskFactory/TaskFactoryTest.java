@@ -1,7 +1,6 @@
-package org.jazzteam.roboworld.model.facroty;
+package org.jazzteam.roboworld.model.facroty.taskFactory;
 
 import org.jazzteam.roboworld.Constants;
-import org.jazzteam.roboworld.exception.notSpecified.TaskTypeNotSpecifiedException;
 import org.jazzteam.roboworld.exception.unsupported.UnsupportedTaskException;
 import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.model.bean.task.generalTask.DieTask;
@@ -14,7 +13,7 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @RunWith(Theories.class)
 public class TaskFactoryTest {
@@ -35,17 +34,16 @@ public class TaskFactoryTest {
         assertEquals(task.getClass(), tasks[1]);
     }
 
-    @Test(expected = UnsupportedTaskException.class)
-    public void getTaskFromFactory_wrongParameter() throws UnsupportedTaskException {
-        // assert
-        TaskFactory.getTaskFromFactory
-                (org.jazzteam.roboworld.model.facroty.Constants.WRONG_PARAMETER,
-                        org.jazzteam.roboworld.model.facroty.Constants.WRONG_PARAMETER);
-    }
-
-    @Test(expected = TaskTypeNotSpecifiedException.class)
+    @Test(expected = NullPointerException.class)
     public void getTaskFromFactory_null() throws UnsupportedTaskException {
         // assert
         TaskFactory.getTaskFromFactory(null, "");
     }
+
+    @Test(expected = UnsupportedTaskException.class)
+    public void getTaskFromFactory_wrongParameter() throws UnsupportedTaskException {
+        // assert
+        TaskFactory.getTaskFromFactory(org.jazzteam.roboworld.model.facroty.Constants.WRONG_PARAMETER, "");
+    }
+
 }

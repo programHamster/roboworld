@@ -35,14 +35,18 @@
         <form name="createTask" id="formCreateTask" method="post" action="main" >
             <br>
             <input type="hidden" name="<%=Constants.PARAM_NAME_COMMAND%>" value="<%=Constants.COMMAND_CREATE_TASK%>">
-            Select the type of task
+            Select the implementation of task
             <select name="<%=Constants.PARAM_NAME_TASK_TYPE%>" required>
-                <optgroup label="special tasks">
+                <optgroup label="back-end tasks">
                     <option selected value="<%=Constants.BACK_END_TASK_VALUE%>">back-end task</option>
+                </optgroup>
+                <optgroup label="front-end tasks">
                     <option value="<%=Constants.FRONT_END_TASK_VALUE%>">front-end task</option>
+                </optgroup>
+                <optgroup label="HR tasks">
                     <option value="<%=Constants.HR_TASK_VALUE%>">HR task</option>
                 </optgroup>
-                <optgroup label="general">
+                <optgroup label="general tasks">
                     <option value="<%=Constants.DIE_TASK_VALUE%>">die</option>
                 </optgroup>
             </select>
