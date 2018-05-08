@@ -14,7 +14,7 @@ import org.jazzteam.roboworld.model.bean.task.TaskHolder;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 import org.jazzteam.roboworld.model.facroty.RobotTypeFactory;
 import org.jazzteam.roboworld.model.facroty.taskFactory.TaskFactory;
-import org.jazzteam.roboworld.output.OutputWriter;
+import org.jazzteam.roboworld.output.OutputInformation;
 import org.jazzteam.roboworld.output.RoboWorldEvent;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +34,7 @@ public enum Command {
             String robotName = decodeURIComponent(request.getParameter(Constants.PARAM_NAME_ROBOT_NAME));
             Robot robot;
             robot = operator.createRobot(robotType, robotName);
-            OutputWriter.write("Robot \"" + robot.getName() + "\" created", RoboWorldEvent.ROBOT);
+            OutputInformation.write("Robot \"" + robot.getName() + "\" created", RoboWorldEvent.ROBOT);
         }
     },
     /**
@@ -47,7 +47,7 @@ public enum Command {
             String taskName = decodeURIComponent(request.getParameter(Constants.PARAM_NAME_TASK_NAME));
             Task task = TaskFactory.getTaskFromFactory(taskImplementation, taskName);
             TaskHolder.getInstance().putTask(task);
-            OutputWriter.write("Task \"" + task.getName() + "\" created", RoboWorldEvent.TASK);
+            OutputInformation.write("Task \"" + task.getName() + "\" created", RoboWorldEvent.TASK);
         }
     },
     /**
@@ -72,7 +72,7 @@ public enum Command {
                     try {
                         operator.assignTask(task, robotName);
                     } catch (RobotDeadException e) {
-                        OutputWriter.write(e.getMessage(), RoboWorldEvent.ROBOT);
+                        OutputInformation.write(e.getMessage(), RoboWorldEvent.ROBOT);
                     }
                 } else {
                     RobotType robotType = getRobotType(request);

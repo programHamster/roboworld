@@ -4,7 +4,8 @@ public abstract class Constants {
     //                  Output option
     public static final String INIT_PARAM_NAME_OUTPUT = "output";
     public static final String INIT_PARAM_VALUE_WEB_SOCKET_OUTPUT = "webSocket";
-    public static final String INIT_PARAM_VALUE_SYSTEM = "system";
+    public static final String INIT_PARAM_VALUE_OUTPUT_STREAM = "output stream";
+    public static final String INIT_PARAM_VALUE_WRITER = "writer";
     //                  Operator option
     public static final String INIT_PARAM_NAME_OPERATOR = "operator";
     public static final String INIT_PARAM_VALUE_OPERATOR_RECREATOR = "recreator";

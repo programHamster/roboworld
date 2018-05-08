@@ -6,7 +6,7 @@ import org.jazzteam.roboworld.model.bean.board.SharedBoard;
 import org.jazzteam.roboworld.model.bean.board.TaskBoard;
 import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.model.facroty.RobotType;
-import org.jazzteam.roboworld.output.OutputWriter;
+import org.jazzteam.roboworld.output.OutputInformation;
 
 import java.util.Objects;
 import java.util.concurrent.locks.Condition;
@@ -86,7 +86,7 @@ public abstract class AbstractRobot implements Robot {
         if(task != null){
             task.perform();
             if(!thread.isInterrupted()){
-                OutputWriter.write("The robot \"" + getName() + "\" completed the task \"" + task.getName() + "\"");
+                OutputInformation.write("The robot \"" + getName() + "\" completed the task \"" + task.getName() + "\"");
             }
         } else {
             if(!takeSharedTask()){

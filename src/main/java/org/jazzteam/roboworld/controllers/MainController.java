@@ -10,7 +10,7 @@ import org.jazzteam.roboworld.exception.unsupported.UnsupportedException;
 import org.jazzteam.roboworld.model.facroty.CommandFactory;
 import org.jazzteam.roboworld.model.facroty.OperatorFactory;
 import org.jazzteam.roboworld.model.facroty.TrackerFactory;
-import org.jazzteam.roboworld.output.OutputWriter;
+import org.jazzteam.roboworld.output.OutputInformation;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.annotation.WebInitParam;
@@ -28,11 +28,6 @@ import java.util.Map;
  */
 @WebServlet(urlPatterns = Constants.MAIN_URL,
     initParams = {
-            /*
-              This parameter is responsible for the way output information about what is happening in the game
-              world is displayed. Available values: webSocket, system.
-             */
-        @WebInitParam(name = Constants.INIT_PARAM_NAME_OUTPUT, value = Setting.INIT_PARAM_VALUE_OUTPUT),
             /*
               This parameter is responsible for the operator controlling the robots.
               Available value: recreator.
@@ -73,8 +68,7 @@ public class MainController extends HttpServlet {
             String trackerName = config.getInitParameter(Constants.INIT_PARAM_NAME_TRACKER);
             String trackerAdditionParams = config.getInitParameter(Constants.INIT_PARAM_NAME_TRACKER_ADDITION_PARAM);
             operator.addTracker(TrackerFactory.getTrackerFromFactory(trackerName, trackerAdditionParams, operator));
-            String outputName = config.getInitParameter(Constants.INIT_PARAM_NAME_OUTPUT);
-            OutputWriter.installOutput(outputName);
+            OutputInformation.installOutput(Setting.output);
         } catch (Exception e) {
             e.printStackTrace();
         }

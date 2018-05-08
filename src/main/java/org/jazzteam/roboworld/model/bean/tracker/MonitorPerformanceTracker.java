@@ -6,7 +6,7 @@ import org.jazzteam.roboworld.model.bean.board.SharedBoard;
 import org.jazzteam.roboworld.model.bean.operator.Operator;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 import org.jazzteam.roboworld.model.facroty.RobotType;
-import org.jazzteam.roboworld.output.OutputWriter;
+import org.jazzteam.roboworld.output.OutputInformation;
 import org.jazzteam.roboworld.output.RoboWorldEvent;
 
 import java.util.EnumMap;
@@ -106,7 +106,7 @@ public class MonitorPerformanceTracker extends TimeTracker {
             if(numberTasks > numberRobots){
                 Robot robot = operator.createRobot(type);
                 String message = type.name() + " robots can not cope, created an additional robot \"" + robot.getName() + "\"";
-                OutputWriter.write(message, RoboWorldEvent.ROBOT);
+                OutputInformation.write(message, RoboWorldEvent.ROBOT);
             } else {
                 this.cancel();
             }

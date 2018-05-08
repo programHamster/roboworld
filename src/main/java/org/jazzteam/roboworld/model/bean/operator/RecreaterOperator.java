@@ -4,13 +4,10 @@ import org.jazzteam.roboworld.model.bean.board.SharedBoard;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.exception.*;
-import org.jazzteam.roboworld.model.bean.tracker.Tracker;
-import org.jazzteam.roboworld.output.OutputWriter;
+import org.jazzteam.roboworld.output.OutputInformation;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 import org.jazzteam.roboworld.output.RoboWorldEvent;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -18,8 +15,6 @@ import java.util.UUID;
  * This ability is enabled by default.
  */
 public class RecreaterOperator extends AbstractOperator {
-    /** The tracker for controlling robots */
-    private List<Tracker> trackers = new ArrayList<>();
     /** the flag responsible for the recreating of the robots */
     private boolean recreate = true;
 
@@ -153,15 +148,15 @@ public class RecreaterOperator extends AbstractOperator {
             } catch(RobotDeadException e){
                 if(recreate){
                     createRobot(robot.getRobotType(), robot.getName(), true);
-                    OutputWriter.write("Robot \"" + robot.getName() + "\" is recreated");
+                    OutputInformation.write("Robot \"" + robot.getName() + "\" is recreated");
                 } else {
                     remove(robot.getName());
-                    OutputWriter.write("Robot \"" + robot.getName() + "\" is removed", RoboWorldEvent.ROBOT);
+                    OutputInformation.write("Robot \"" + robot.getName() + "\" is removed", RoboWorldEvent.ROBOT);
                 }
             }
         });
         RobotType type = RobotType.identifyRobotType(task);
-        trackers.forEach(tracker -> tracker.control(type));
+        controlAllTrackers(type);
         return success;
     }
 
@@ -205,7 +200,7 @@ public class RecreaterOperator extends AbstractOperator {
                 if(recreate){
                     try{
                         robot = createRobot(robot.getRobotType(), robot.getName(), true);
-                        OutputWriter.write("Robot \"" + robot.getName() + "\" is recreated");
+                        OutputInformation.write("Robot \"" + robot.getName() + "\" is recreated");
                     } catch(RobotAlreadyExistException e){
                         // never happen
                     }
@@ -221,20 +216,6 @@ public class RecreaterOperator extends AbstractOperator {
             tryAssignTask(task, robot);
         }
         return success;
-    }
-
-    /**
-     * Adds a tracker to monitor robots and returns confirmation of its installation.
-     *
-     * @param tracker tracker added for monitoring
-     * @return <code>true</code> if tracker added and <code>false</code> otherwise
-     * @throws NullPointerException if the tracker in {@code null}
-     */
-    public boolean addTracker(Tracker tracker){
-        if(tracker == null){
-            throw new NullPointerException(Constants.TRACKER_IS_NULL);
-        }
-        return trackers.add(tracker);
     }
 
     /**

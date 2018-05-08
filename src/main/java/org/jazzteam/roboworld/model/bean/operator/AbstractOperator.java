@@ -3,11 +3,12 @@ package org.jazzteam.roboworld.model.bean.operator;
 import org.jazzteam.roboworld.exception.Constants;
 import org.jazzteam.roboworld.exception.notSpecified.RobotNameNotSpecifiedException;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
+import org.jazzteam.roboworld.model.bean.tracker.Tracker;
 import org.jazzteam.roboworld.model.facroty.RobotType;
-import org.jazzteam.roboworld.output.OutputWriter;
-import org.jazzteam.roboworld.output.RoboWorldEvent;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractOperator implements Operator {
     /** the storage map for robots */
     private final Map<String, Robot> robots = new ConcurrentHashMap<>();
+    /** The tracker for controlling robots */
+    private List<Tracker> trackers = new ArrayList<>();
 
     /**
      * Saves the robot in the map using the robot name as the key. If the robot with this name
@@ -100,13 +103,8 @@ public abstract class AbstractOperator implements Operator {
      * @return the number of robots of the specified type under the control of operator
      */
     public int numberRobots(RobotType type){
-        final int[] count = new int[1];
-        robots.forEach((name, robot) -> {
-            if(robot.getRobotType() == type){
-                count[0]++;
-            }
-        });
-        return count[0];
+        return (int)robots.entrySet().stream()
+                .filter(entry -> entry.getValue().getRobotType() == type).count();
     }
 
     /**
@@ -118,6 +116,38 @@ public abstract class AbstractOperator implements Operator {
      */
     public Map<String, Robot> getRobots(){
         return Collections.unmodifiableMap(robots);
+    }
+
+    /**
+     * Adds a tracker to monitor robots and returns confirmation of its installation.
+     *
+     * @param tracker tracker added for monitoring
+     * @return <code>true</code> if tracker added and <code>false</code> otherwise
+     * @throws NullPointerException if the tracker in {@code null}
+     */
+    public boolean addTracker(Tracker tracker){
+        if(tracker == null){
+            throw new NullPointerException(Constants.TRACKER_IS_NULL);
+        }
+        return trackers.add(tracker);
+    }
+
+    /**
+     * applies control of the specified robot type of all trackers.
+     *
+     * @param type the robot type
+     */
+    public void controlAllTrackers(RobotType type){
+        trackers.forEach(tracker -> tracker.control(type));
+    }
+
+    /**
+     * Returns an unmodified list containing trackers.
+     *
+     * @return an unmodified list containing trackers
+     */
+    public List<Tracker> getTrackers(){
+        return Collections.unmodifiableList(trackers);
     }
 
 }

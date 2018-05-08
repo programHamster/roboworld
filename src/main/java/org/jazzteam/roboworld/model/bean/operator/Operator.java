@@ -10,6 +10,7 @@ import org.jazzteam.roboworld.exception.RobotAlreadyExistException;
 import org.jazzteam.roboworld.model.bean.tracker.Tracker;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -107,5 +108,7 @@ public interface Operator {
      * @throws TaskIsNullException if the specified task is null
      */
     boolean broadcastTask(Task task);
+
+    List<Tracker> getTrackers();
 
 }

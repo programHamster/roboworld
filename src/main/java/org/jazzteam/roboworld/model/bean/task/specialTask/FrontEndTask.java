@@ -1,6 +1,6 @@
 package org.jazzteam.roboworld.model.bean.task.specialTask;
 
-import org.jazzteam.roboworld.output.OutputWriter;
+import org.jazzteam.roboworld.output.OutputInformation;
 
 /**
  * This class describes the front-end task
@@ -13,7 +13,7 @@ public class FrontEndTask extends AbstractSpecialTask {
     }
 
     public void perform(){
-        OutputWriter.write("The front-end task \"" + getName() + "\" is performing...");
+        OutputInformation.write("The front-end task \"" + getName() + "\" is performing...");
         super.perform();
     }
 

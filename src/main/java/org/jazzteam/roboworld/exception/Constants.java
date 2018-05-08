@@ -16,7 +16,7 @@ public class Constants {
     public static final String TRACKER_NAME_IS_NULL = "Tracker name is null";
     public static final String ROBOT_IS_ALREADY_ACTIVATED = "the robot is already activated";
     public static final String UNKNOWN_OUTPUT_NAME = "unknown output name";
-    public static final String OUTPUT_NAME_IS_NULL = "output name is null";
+    public static final String OUTPUT_IS_NULL = "output is null";
     public static final String EVENT_IS_NULL = "event is null";
     public static final String TASK_IMPLEMENTATION_NOT_FOUND = "Task implementation is not found";
     public static final String TASK_IMPLEMENTATION_IS_NULL_EMPTY = "Task implementation is null or empty";

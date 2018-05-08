@@ -1,6 +1,6 @@
 package org.jazzteam.roboworld.model.bean.task.specialTask;
 
-import org.jazzteam.roboworld.output.OutputWriter;
+import org.jazzteam.roboworld.output.OutputInformation;
 
 /**
  * This class describes the back-end task
@@ -13,7 +13,7 @@ public class BackEndTask extends AbstractSpecialTask {
     }
 
     public void perform(){
-        OutputWriter.write("The back-end task \"" + getName() + "\" is performing...");
+        OutputInformation.write("The back-end task \"" + getName() + "\" is performing...");
         super.perform();
     }
 
