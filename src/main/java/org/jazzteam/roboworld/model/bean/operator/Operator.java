@@ -77,15 +77,6 @@ public interface Operator {
     Robot get(String robotName);
 
     /**
-     * Adds a tracker to monitor robots and returns confirmation of its installation.
-     *
-     * @param tracker tracker added for monitoring
-     * @return <code>true</code> if tracker added and <code>false</code> otherwise
-     * @throws NullPointerException if the tracker in {@code null}
-     */
-    boolean addTracker(Tracker tracker);
-
-    /**
      * Assigns the specified task to the robot with the specified name and returns confirmation.
      *
      * @param task the assigned task
@@ -108,7 +99,5 @@ public interface Operator {
      * @throws TaskIsNullException if the specified task is null
      */
     boolean broadcastTask(Task task);
-
-    List<Tracker> getTrackers();
 
 }

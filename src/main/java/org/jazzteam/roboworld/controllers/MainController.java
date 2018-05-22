@@ -1,149 +1,134 @@
 package org.jazzteam.roboworld.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jazzteam.roboworld.Constants;
-import org.jazzteam.roboworld.Setting;
-import org.jazzteam.roboworld.command.Command;
-import org.jazzteam.roboworld.model.bean.operator.Operator;
-import org.jazzteam.roboworld.model.bean.task.TaskHolder;
+import org.jazzteam.roboworld.exception.RobotDeadException;
+import org.jazzteam.roboworld.exception.TaskIsNullException;
+import org.jazzteam.roboworld.exception.TaskNotFeasibleException;
+import org.jazzteam.roboworld.exception.TaskNotFoundException;
 import org.jazzteam.roboworld.exception.unsupported.UnsupportedException;
-import org.jazzteam.roboworld.model.facroty.CommandFactory;
-import org.jazzteam.roboworld.model.facroty.OperatorFactory;
-import org.jazzteam.roboworld.model.facroty.TrackerFactory;
+import org.jazzteam.roboworld.exception.unsupported.UnsupportedRobotTypeException;
+import org.jazzteam.roboworld.exception.unsupported.UnsupportedTaskException;
+import org.jazzteam.roboworld.model.bean.operator.Operator;
+import org.jazzteam.roboworld.model.bean.robot.Robot;
+import org.jazzteam.roboworld.model.bean.task.Task;
+import org.jazzteam.roboworld.model.bean.task.TaskHolder;
+import org.jazzteam.roboworld.model.facroty.RobotType;
+import org.jazzteam.roboworld.model.facroty.RobotTypeFactory;
+import org.jazzteam.roboworld.model.facroty.taskFactory.TaskFactory;
 import org.jazzteam.roboworld.output.OutputInformation;
+import org.jazzteam.roboworld.output.RoboWorldEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.annotation.WebInitParam;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 
 /**
  * This controller is designed to provide information about robots and tasks, as well as executing commands
  * sent by the user.
  */
-@WebServlet(urlPatterns = Constants.MAIN_URL,
-    initParams = {
-            /*
-              This parameter is responsible for the operator controlling the robots.
-              Available value: recreator.
-             */
-        @WebInitParam(name = Constants.INIT_PARAM_NAME_OPERATOR, value = Setting.INIT_PARAM_VALUE_OPERATOR),
-            // This parameter specifies additional parameters for the operator.
-            /*
-              The parameter used indicates whether to enable or disable the ability to recreate robots in the event
-               of their death. Available value: true.
-             */
-        @WebInitParam(name = Constants.INIT_PARAM_NAME_OPERATOR_ADDITION_PARAM, value = Setting.INIT_PARAM_VALUE_OPERATOR_ADDITION_PARAM),
-            /*
-              This parameter is responsible for the selection of the tracker used by the operator to control robots.
-              Available value: performance.
-             */
-        @WebInitParam(name = Constants.INIT_PARAM_NAME_TRACKER, value = Setting.INIT_PARAM_VALUE_TRACKER),
-            // This parameter specifies additional parameters for the tracker.
-            /*
-              This parameter is responsible for the period with which the tracker will monitor the performance of robots.
-              Specified in milliseconds. Installed value: 5000.
-             */
-        @WebInitParam(name = Constants.INIT_PARAM_NAME_TRACKER_ADDITION_PARAM, value = Setting.INIT_PARAM_VALUE_TRACKER_PERIOD),
-    })
-public class MainController extends HttpServlet {
+@RestController
+@RequestMapping(Constants.MAIN_URL)
+public class MainController {
     /** the operator who will carry out the management of robots */
-    private static Operator operator;
+    @Autowired
+    private Operator operator;
 
-    /**
-     * This method initializes the output method, operator, and tracker, as well as their additional parameters.
-     */
-    @Override
-    public void init(ServletConfig config){
-        try {
-            super.init(config);
-            String operatorName = config.getInitParameter(Constants.INIT_PARAM_NAME_OPERATOR);
-            String operatorAdditionParams = config.getInitParameter(Constants.INIT_PARAM_NAME_OPERATOR_ADDITION_PARAM);
-            operator = OperatorFactory.getOperatorFromFactory(operatorName, operatorAdditionParams);
-            String trackerName = config.getInitParameter(Constants.INIT_PARAM_NAME_TRACKER);
-            String trackerAdditionParams = config.getInitParameter(Constants.INIT_PARAM_NAME_TRACKER_ADDITION_PARAM);
-            operator.addTracker(TrackerFactory.getTrackerFromFactory(trackerName, trackerAdditionParams, operator));
-            OutputInformation.installOutput(Setting.output);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @GetMapping(value = "/robots", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Map<String, Robot> getRobots() {
+        return operator.getRobots();
     }
 
-    /**
-     * This method is used to pass information about robots and tasks to the client side.
-     *
-     * @param request request came from the user
-     * @param response response to the user containing the requested data
-     * @throws IOException if an input or output error is detected
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        try {
-            response.setHeader(Constants.HEADER_KEY_JSON, Constants.HEADER_VALUE_JSON);
-            ObjectMapper mapper = new ObjectMapper();
-            String need = request.getParameter(Constants.PARAM_NAME_INIT);
-            Map<?, ?> data;
-            switch(need){
-                case Constants.PARAM_VALUE_TASKS_INIT:
-                    data = TaskHolder.getInstance().getAllTasks();
-                    break;
-                case Constants.PARAM_VALUE_ROBOTS_INIT:
-                    data = operator.getRobots();
-                    break;
-                default:
-                    throw new IllegalArgumentException("unknown query \"" + need + "\"");
+    @GetMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Map<RobotType, Map<String, Task>> getTasks() {
+        return TaskHolder.getInstance().getAllTasks();
+    }
+
+    @PostMapping(value = "/robots")
+    public void createRobot(@RequestParam(Constants.PARAM_NAME_ROBOT_TYPE) String robotTypeName,
+                            @RequestParam(Constants.PARAM_NAME_ROBOT_NAME) String robotName)
+            throws UnsupportedRobotTypeException {
+        RobotType robotType = RobotTypeFactory.getRobotTypeFromFactory(robotTypeName);
+        Robot robot = operator.createRobot(robotType, decodeURIComponent(robotName));
+        OutputInformation.write("Robot \"" + robot.getName() + "\" created", RoboWorldEvent.ROBOT);
+    }
+
+    @PostMapping(value = "/tasks")
+    public void createTask(@RequestParam(Constants.PARAM_NAME_TASK_TYPE) String taskImplementation,
+                            @RequestParam(Constants.PARAM_NAME_TASK_NAME) String taskName)
+            throws UnsupportedTaskException {
+        taskName = decodeURIComponent(taskName);
+        Task task = TaskFactory.getTaskFromFactory(taskImplementation, taskName);
+        TaskHolder.getInstance().putTask(task);
+        OutputInformation.write("Task \"" + task.getName() + "\" created", RoboWorldEvent.TASK);
+    }
+
+    @PostMapping(value = "/assign")
+    public void assignTask(@RequestParam(Constants.PARAM_NAME_TASK_NAME) String taskName,
+                           @RequestParam(Constants.PARAM_NAME_ROBOT_NAME) String robotName) {
+        robotName = decodeURIComponent(robotName);
+        taskName = decodeURIComponent(taskName);
+        Robot robot = operator.get(robotName);
+        Task task = TaskHolder.getInstance().getTask(taskName, robot.getRobotType());
+        if(task == null){
+            task = TaskHolder.getInstance().totalSearch(taskName);
+            if(task != null){
+                throw new TaskNotFeasibleException(robotName, task);
+            } else {
+                throw new TaskNotFoundException(taskName);
             }
-            mapper.writeValue(response.getWriter(), data);
-        } catch (RuntimeException | IOException e) {
-            sendError(response, e);
         }
-    }
-
-    /**
-     * The method executes the passed command from the user.
-     *
-     * @param request request came from the user
-     * @param response response to the user containing the requested data
-     * @throws IOException if an input or output error is detected
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
         try {
-            String commandName = request.getParameter(Constants.PARAM_NAME_COMMAND);
-            Command command = CommandFactory.getCommandFromFactory(commandName);
-            command.execute(request, operator);
-        } catch (UnsupportedException | RuntimeException e) {
-            sendError(response, e);
+            operator.assignTask(task, robotName);
+        } catch (RobotDeadException e) {
+            OutputInformation.write(e.getMessage(), RoboWorldEvent.ROBOT);
         }
     }
 
+    @PostMapping(value = "/broadcast")
+    public void broadcastTask(@RequestParam(Constants.PARAM_NAME_TASK_NAME) String taskName,
+                              @RequestParam(Constants.PARAM_NAME_ROBOT_TYPE) String robotTypeName)
+            throws UnsupportedRobotTypeException {
+        try {
+            RobotType robotType = RobotTypeFactory.getRobotTypeFromFactory(robotTypeName);
+            taskName = decodeURIComponent(taskName);
+            Task task = TaskHolder.getInstance().getTask(taskName, robotType);
+            operator.broadcastTask(task);
+        } catch (TaskIsNullException e) {
+            throw new TaskNotFoundException(taskName);
+        }
+    }
+
+    @ExceptionHandler({UnsupportedException.class, RuntimeException.class})
+    public ResponseEntity<String> getMessageFromException(Exception ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     /**
-     * Sends an error message to the client using the code 500.
+     * Decodes the passed UTF-8 String using an algorithm that's compatible with
+     * JavaScript's <code>decodeURIComponent</code> function. Returns
+     * <code>null</code> if the String is <code>null</code>.
      *
-     * @param response response used to send a message
-     * @param e exception occurred during the work
-     * @throws IOException if an input or output error is detected
+     * @param str The UTF-8 encoded String to be decoded
+     * @return the decoded String
      */
-    private static void sendError(HttpServletResponse response, Exception e) throws IOException{
-        response.setStatus(Constants.ERROR_STATUS_CODE);
-        try(PrintWriter writer = response.getWriter()){
-            writer.write(e.getMessage());
+    private static String decodeURIComponent(String str){
+        if (str == null) {
+            return null;
         }
-    }
-
-    /**
-     * Clears the reference to the used operator.
-     */
-    @Override
-    public void destroy(){
-        operator = null;
+        String result;
+        try {
+            result = URLDecoder.decode(str, "UTF-8");
+        }
+        // This exception should never occur.
+        catch (UnsupportedEncodingException e) {
+            result = str;
+        }
+        return result;
     }
 
 }

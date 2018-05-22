@@ -4,6 +4,7 @@ import org.jazzteam.roboworld.model.bean.board.SharedBoard;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 import org.jazzteam.roboworld.model.bean.task.Task;
 import org.jazzteam.roboworld.exception.*;
+import org.jazzteam.roboworld.model.bean.tracker.TrackerInitiator;
 import org.jazzteam.roboworld.output.OutputInformation;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 import org.jazzteam.roboworld.output.RoboWorldEvent;
@@ -156,7 +157,7 @@ public class RecreaterOperator extends AbstractOperator {
             }
         });
         RobotType type = RobotType.identifyRobotType(task);
-        controlAllTrackers(type);
+        getTrackerInitiator().control(new BroadcastEvent(this, type));
         return success;
     }
 

@@ -37,7 +37,7 @@ public class RobotTypeFactoryTest {
                 (org.jazzteam.roboworld.model.facroty.Constants.WRONG_PARAMETER);
     }
 
-    @Test(expected = RobotTypeNotSpecifiedException.class)
+    @Test(expected = NullPointerException.class)
     public void getRobotTypeFromFactory_null() throws UnsupportedRobotTypeException {
         // assert
         RobotType type = RobotTypeFactory.getRobotTypeFromFactory(null);

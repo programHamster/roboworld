@@ -1,38 +1,10 @@
 package org.jazzteam.roboworld.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jazzteam.roboworld.Constants;
-import org.jazzteam.roboworld.Setting;
-import org.jazzteam.roboworld.model.bean.operator.Operator;
-import org.jazzteam.roboworld.model.bean.robot.Robot;
-import org.jazzteam.roboworld.model.bean.task.Task;
-import org.jazzteam.roboworld.model.bean.task.TaskHolder;
-import org.jazzteam.roboworld.model.bean.task.generalTask.DieTask;
-import org.jazzteam.roboworld.model.bean.task.specialTask.BackEndTask;
-import org.jazzteam.roboworld.model.bean.task.specialTask.FrontEndTask;
-import org.jazzteam.roboworld.model.bean.task.specialTask.HRTask;
-import org.jazzteam.roboworld.model.facroty.RobotType;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class MainControllerTest {
     private final MainController mainServlet = new MainController();
+/*
 
     @Before
     public void initServlet(){
@@ -105,18 +77,6 @@ public class MainControllerTest {
         operatorField.setAccessible(true);
         return (Operator)operatorField.get(mainController);
     }
-
-    private static void initServlet(MainController mainController){
-        ServletConfig mockConfig = mock(ServletConfig.class);
-        when(mockConfig.getInitParameter(Constants.INIT_PARAM_NAME_OPERATOR)).
-                thenReturn(Setting.INIT_PARAM_VALUE_OPERATOR);
-        when(mockConfig.getInitParameter(Constants.INIT_PARAM_NAME_OPERATOR_ADDITION_PARAM)).
-                thenReturn(Setting.INIT_PARAM_VALUE_OPERATOR_ADDITION_PARAM);
-        when(mockConfig.getInitParameter(Constants.INIT_PARAM_NAME_TRACKER)).
-                thenReturn(Setting.INIT_PARAM_VALUE_TRACKER);
-        when(mockConfig.getInitParameter(Constants.INIT_PARAM_NAME_TRACKER_ADDITION_PARAM)).
-                thenReturn(Setting.INIT_PARAM_VALUE_TRACKER_PERIOD);
-        mainController.init(mockConfig);
-    }
+*/
 
 }

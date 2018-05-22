@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 public abstract class OutputInformation {
     /** The default way to display information */
-    private static OutputEnum output = OutputEnum.OUTPUT_STREAM;
+    private static Output output = new StreamOutput();
 
     /**
      * Installs the way information is displayed.
@@ -26,7 +26,7 @@ public abstract class OutputInformation {
      * @param output an output
      * @throws NullPointerException if the specified output is <code>null</code>
      */
-    public static void installOutput(OutputEnum output) {
+    public static void installOutput(Output output) {
         Objects.requireNonNull(output, org.jazzteam.roboworld.exception.Constants.OUTPUT_IS_NULL);
         OutputInformation.output = output;
     }

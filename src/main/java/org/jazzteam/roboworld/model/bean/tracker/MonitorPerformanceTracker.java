@@ -3,6 +3,7 @@ package org.jazzteam.roboworld.model.bean.tracker;
 import org.jazzteam.roboworld.exception.Constants;
 import org.jazzteam.roboworld.exception.notSpecified.RobotTypeNotSpecifiedException;
 import org.jazzteam.roboworld.model.bean.board.SharedBoard;
+import org.jazzteam.roboworld.model.bean.operator.BroadcastEvent;
 import org.jazzteam.roboworld.model.bean.operator.Operator;
 import org.jazzteam.roboworld.model.bean.robot.Robot;
 import org.jazzteam.roboworld.model.facroty.RobotType;
@@ -11,6 +12,7 @@ import org.jazzteam.roboworld.output.RoboWorldEvent;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimerTask;
 
 /**
@@ -21,35 +23,28 @@ import java.util.TimerTask;
 public class MonitorPerformanceTracker extends TimeTracker {
     /** The map storing monitors performing a test of the performance of each type of robot separately */
     private final Map<RobotType, MonitorPerformance> timerTasks = new EnumMap<>(RobotType.class);
-    /** The operator who uses this tracker and provides information about the robots */
-    private final Operator operator;
 
     /**
      * The constructor defines the operator that will use this tracker and provide information about
      * the robots, as well as the period with which the tracker will monitor the robots.
      *
-     * @param operator the operator that will use this tracker and provide information about the robots
      * @param period the period with which the tracker will monitor the robots
      * @throws NullPointerException if the specified operator is null
      * @throws IllegalArgumentException if the specified period has a negative or zero value
      */
-    public MonitorPerformanceTracker(Operator operator, long period) {
+    public MonitorPerformanceTracker(long period) {
         super(period);
-        if(operator == null){
-            throw new NullPointerException(Constants.OPERATOR_IS_NULL);
-        }
-        this.operator = operator;
     }
 
     /**
      * Creates a monitor to check the robots performance and starts it.
-     *
-     * @param type robot type
-     * @throws RobotTypeNotSpecifiedException if the robot type is null
+     * @param broadcast
      */
-    public void control(RobotType type){
+    @Override
+    public void onApplicationEvent(BroadcastEvent broadcast){
         getTimer().purge();
-        MonitorPerformance monitor = new MonitorPerformance(type);
+        RobotType type = broadcast.getType();
+        MonitorPerformance monitor = new MonitorPerformance(broadcast.getSource(), type);
         startMonitor(type, monitor);
     }
 
@@ -75,6 +70,8 @@ public class MonitorPerformanceTracker extends TimeTracker {
     private class MonitorPerformance extends TimerTask {
         /** type of robot that is controlled */
         private final RobotType type;
+        /** The operator who uses this tracker and provides information about the robots */
+        private final Operator operator;
 
         /**
          * This constructor initializes type of the robot.
@@ -82,10 +79,10 @@ public class MonitorPerformanceTracker extends TimeTracker {
          * @param type the robot type
          * @throws NullPointerException if robot type is null
          */
-        private MonitorPerformance(RobotType type){
-            if(type == null){
-                throw new RobotTypeNotSpecifiedException(Constants.TASK_TYPE_IS_NULL);
-            }
+        private MonitorPerformance(Operator operator, RobotType type){
+            Objects.requireNonNull(operator, "Operator is null");
+            Objects.requireNonNull(type, Constants.TASK_TYPE_IS_NULL);
+            this.operator = operator;
             this.type = type;
         }
 

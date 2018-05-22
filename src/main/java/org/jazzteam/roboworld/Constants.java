@@ -1,20 +1,6 @@
 package org.jazzteam.roboworld;
 
 public abstract class Constants {
-    //                  Output option
-    public static final String INIT_PARAM_NAME_OUTPUT = "output";
-    public static final String INIT_PARAM_VALUE_WEB_SOCKET_OUTPUT = "webSocket";
-    public static final String INIT_PARAM_VALUE_OUTPUT_STREAM = "output stream";
-    public static final String INIT_PARAM_VALUE_WRITER = "writer";
-    //                  Operator option
-    public static final String INIT_PARAM_NAME_OPERATOR = "operator";
-    public static final String INIT_PARAM_VALUE_OPERATOR_RECREATOR = "recreator";
-    public static final String INIT_PARAM_NAME_OPERATOR_ADDITION_PARAM = "operator addition param";
-    //                  Tracker option
-    public static final String INIT_PARAM_NAME_TRACKER = "tracker";
-    public static final String INIT_PARAM_VALUE_TRACKER_PERFORMANCE = "performance";
-    public static final String INIT_PARAM_NAME_TRACKER_ADDITION_PARAM = "tracker addition param";
-    public static final String INIT_PARAM_VALUE_TRACKER_PERIOD = "5000";
     //                   Controllers
     public static final String MESSAGE_URL = "/chat";
     public static final String MAIN_URL = "/main";

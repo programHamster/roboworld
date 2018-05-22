@@ -12,6 +12,7 @@ import org.jazzteam.roboworld.model.bean.task.specialTask.FrontEndTask;
 import org.jazzteam.roboworld.model.bean.task.specialTask.HRTask;
 import org.jazzteam.roboworld.model.bean.tracker.MonitorPerformanceTracker;
 import org.jazzteam.roboworld.model.bean.tracker.Tracker;
+import org.jazzteam.roboworld.model.bean.tracker.TrackerInitiator;
 import org.jazzteam.roboworld.model.facroty.RobotType;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -20,6 +21,7 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(Theories.class)
 public class RecreaterOperatorTest {
@@ -74,6 +76,8 @@ public class RecreaterOperatorTest {
     public void broadcastTask() {
         // arrange
         RecreaterOperator operator = new RecreaterOperator();
+        TrackerInitiator trackerInitiator = mock(TrackerInitiator.class);
+        operator.setTrackerInitiator(trackerInitiator);
         Task task = new BackEndTask();
         // act
         boolean success = operator.broadcastTask(task);
@@ -148,20 +152,4 @@ public class RecreaterOperatorTest {
         operator.broadcastTask(null);
     }
 
-    @Test
-    public void addTracker() {
-        // arrange
-        RecreaterOperator operator = new RecreaterOperator();
-        Tracker tracker = new MonitorPerformanceTracker(operator, 1);
-        // act
-        assertTrue(operator.addTracker(tracker));
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void addTracker_null() {
-        // arrange
-        RecreaterOperator operator = new RecreaterOperator();
-        // act
-        assertTrue(operator.addTracker(null));
-    }
 }

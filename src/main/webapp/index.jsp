@@ -1,10 +1,11 @@
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="org.jazzteam.roboworld.Constants" %>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Roboworld</title>
-    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="<spring:url value='js/main.js'/>"></script>
     <style type="text/css">
         p {
             margin: 5px 0;

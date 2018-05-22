@@ -10,11 +10,10 @@ var HEADER_VALUE_CACHE = "no-cache";
 var READY_STATE_CHANGE = "readystatechange";
 var GET_METHOD = "GET";
 var POST_METHOD = "POST";
-var URL = "main";
+var MAIN = "main/";
 var GIVE_TASK_FORM_ID = "formGiveTask";
 var NEED_ROBOTS = "robots";
 var NEED_TASKS = "tasks";
-var QUERY_PARAMETER = "?need=";
 
 var ID_SELECT_TASK_ELEMENT = "taskNames";
 var ID_SELECT_ROBOT_ELEMENT = "robotNames";
@@ -39,7 +38,7 @@ var jsonDataTasks;
 function init(need) {
     var form = document.getElementById(GIVE_TASK_FORM_ID);
     var xhr = new XMLHttpRequest();
-    xhr.open(GET_METHOD, URL + QUERY_PARAMETER + need, true);
+    xhr.open(GET_METHOD, MAIN + need, true);
     xhr.setRequestHeader(HEADER_KEY_AJAX, HEADER_VALUE_AJAX);
     xhr.setRequestHeader(HEADER_KEY_CACHE, HEADER_VALUE_CACHE);
     xhr.send();
@@ -151,17 +150,20 @@ var INPUT_TYPE_TEXT = 'input[type="text"]';
 
 function createRobotOrTask(name) {
     var form;
+    var url = MAIN;
     switch(name){
         case TASK:
             form = document.forms[CREATE_TASK_FORM_ID];
+            url += NEED_TASKS;
             break;
         case ROBOT:
             form = document.forms[CREATE_ROBOT_FORM_ID];
+            url += NEED_ROBOTS;
             break;
     }
     var inputText = form.querySelectorAll(INPUT_TYPE_TEXT)[0];
     var body = parseForm(form);
-    var xhr = sendPost(body);
+    var xhr = sendPost(url, body);
     inputText.value = EMPTY;
 
     xhr.addEventListener(READY_STATE_CHANGE, function(){
@@ -213,14 +215,27 @@ var ROBOT_TYPES_NAME = {
     "FRONT_END_DEVELOPER":"front",
     "HR":"hr",
     "GENERAL":"general"
-}
+};
+var ASSIGN_URL = "assign";
+var BROADCAST_URL = "broadcast";
 
 function challenge() {
     var form = document.getElementById(GIVE_TASK_FORM_ID);
-    var body = parseForm(form);
-    var robotType = findRobotType(form);
-    var body = appendToQuery(body, NAME_FOR_ROBOT_TYPE_KEY, robotType);
-    var xhr = sendPost(body);
+    var checkboxElement = document.getElementById(CHECKBOX_ID);
+    var taskNameSelect = form.querySelectorAll('#' + ID_SELECT_TASK_ELEMENT)[0];
+    var body = appendToQuery(EMPTY, taskNameSelect.name, taskNameSelect.value);
+    var xhr;
+
+    if(checkboxElement.checked){
+        var robotNameSelect = form.querySelectorAll('#' + ID_SELECT_ROBOT_ELEMENT)[0];
+        body = appendToQuery(body, robotNameSelect.name, robotNameSelect.value);
+        xhr = sendPost(MAIN + ASSIGN_URL, body);
+    } else {
+        var robotType = findRobotType(taskNameSelect.value);
+        body = appendToQuery(body, NAME_FOR_ROBOT_TYPE_KEY, robotType);
+        xhr = sendPost(MAIN + BROADCAST_URL, body);
+    }
+
     xhr.addEventListener(READY_STATE_CHANGE, function(){
         if(this.readyState !== 4) return;
         if(this.status === 200){
@@ -231,22 +246,21 @@ function challenge() {
     });
 }
 
-function findRobotType(form){
+function findRobotType(taskName){
     var result = "";
-    var select = form.querySelectorAll(['select[name="taskName"]'])[0];
-    var taskName = select.value;
     for(var type in jsonDataTasks){
         var task = jsonDataTasks[type][taskName];
         if(task !== undefined && task !== null){
             result = ROBOT_TYPES_NAME[type];
+            break;
         }
     }
     return result;
 }
 
-function sendPost(body) {
+function sendPost(url, body) {
     var xhr = new XMLHttpRequest();
-    xhr.open(POST_METHOD, URL, true);
+    xhr.open(POST_METHOD, url, true);
     xhr.setRequestHeader(HEADER_KEY_AJAX, HEADER_VALUE_AJAX);
     xhr.setRequestHeader(HEADER_KEY_CONTENT_TYPE, HEADER_VALUE_CONTENT_TYPE);
     xhr.send(body);

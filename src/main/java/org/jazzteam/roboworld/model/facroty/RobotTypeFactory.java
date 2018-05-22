@@ -4,6 +4,8 @@ import org.jazzteam.roboworld.Constants;
 import org.jazzteam.roboworld.exception.notSpecified.RobotTypeNotSpecifiedException;
 import org.jazzteam.roboworld.exception.unsupported.UnsupportedRobotTypeException;
 
+import java.util.Objects;
+
 /**
  * This factory is designed to determine the particular type of robot by its name.
  */
@@ -18,7 +20,8 @@ public abstract class RobotTypeFactory {
      * @throws RobotTypeNotSpecifiedException if the specified name of the robot is <code>null</code>
      */
     public static RobotType getRobotTypeFromFactory(String robotType) throws UnsupportedRobotTypeException{
-        if(robotType == null || robotType.isEmpty()){
+        Objects.requireNonNull(robotType, "Robot type is null");
+        if(robotType.isEmpty()){
             throw new RobotTypeNotSpecifiedException();
         }
         switch (robotType){
