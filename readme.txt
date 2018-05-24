@@ -12,17 +12,17 @@ For tracking robots provided interface tracker with the one implementation is th
 When you create a task, it initially falls into the task holder, from where it can be assigned without recreating it after its execution.
 
 Setting the world before starting.
-In the class file “org.jazzteam.roboworld.Setting” contains parameters that are read by the servlet during initialization and can be extended if necessary.
+In the class “by.roboworld.spring.RoboworldConfig” contains methods which determine the parameters of the application and can be changed or extended if necessary.
 
 Output option
 Here are the settings for output information about everything that happens in the game world.
-The selection is made from a constant INIT_PARAM_VALUE_OUTPUT.
-If the value of the “system” output will be displayed in the console.
-If the value “webSocket” is set, the output will be made to the browser using the websocket technology.
+Pass the desired implementation of "by.roboworld.output.Output" interface to the method OutputInformation.installOutput().
+If you pass "by.roboworld.output.implementation.StreamOutput" and you will not use the method setOutputStream() the  output will be displayed in the console.
+If you pass "by.roboworld.output.implementation.WebSocketOutput" the output will be made to the browser using the websocket technology.
 
 Operator option
-Here are the settings of the operator. You can select a specific implementation and specify it in a constant INIT_PARAM_VALUE_OPERATOR. Only the recreator is available and can be extended if necessary.
-Below is an additional parameter passed to the constructor when creating an operator object. This parameter indicates the mode of recreating robots.
+Here are the settings of the operator. Use the desired implementation of "by.roboworld.model.bean.operator.Operator" interface. Only the "by.roboworld.model.bean.operator.RecreaterOperator" is available and can be extended if necessary.
+You can specify the trackerInitiator (in this way "operator.setTrackerInitiator(trackerInitiator())") if you want the operator to use trackers.
 
 Tracker option
-Here are the settings of the tracker used by the operator. Only the performance tracker specified in the constant is implemented INIT_PARAM_VALUE_TRACKER, which can be extended if necessary. In the constant INIT_PARAM_VALUE_TRACKER_PERIOD specify the period with which will be execute to monitor the performance of robots.
+Determine tracker beans which you want the operator to use. Now available only "by.roboworld.model.bean.tracker.MonitorPerformanceTracker". Implement the "by.roboworld.model.bean.tracker.Tracker" interface if you want to add a tracker implementation.

@@ -16,7 +16,7 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc">
 
     <mvc:annotation-driven/>
-    <context:component-scan base-package="org.jazzteam.roboworld.controllers"/>
+    <context:component-scan base-package="by.roboworld.controllers"/>
 
     <mvc:default-servlet-handler/>
     <bean class="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" />
