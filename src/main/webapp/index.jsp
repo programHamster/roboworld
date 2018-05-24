@@ -1,6 +1,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="org.jazzteam.roboworld.Constants" %>
+<%@ page import="by.roboworld.Constants" %>
 <!DOCTYPE html>
 <html>
 <head>

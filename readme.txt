@@ -12,11 +12,11 @@ For tracking robots provided interface tracker with the one implementation is th
 When you create a task, it initially falls into the task holder, from where it can be assigned without recreating it after its execution.
 
 Setting the world before starting.
-In the class file “org.jazzteam.roboworld.Setting” contains parameters that are read by the servlet during initialization and can be extended if necessary.
+In the class “by.roboworld.spring.RoboworldConfig” contains methods which determine the parameters of the application and can be changed or extended if necessary.
 
 Output option
 Here are the settings for output information about everything that happens in the game world.
-The selection is made from a constant INIT_PARAM_VALUE_OUTPUT.
+Pass the desired implementation of "by.roboworld.output.Output" interface to the method OutputInformation.installOutput().
 If the value of the “system” output will be displayed in the console.
 If the value “webSocket” is set, the output will be made to the browser using the websocket technology.
 
