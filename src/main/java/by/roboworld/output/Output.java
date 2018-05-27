@@ -12,7 +12,8 @@ public abstract class Output implements Closeable {
      * Writes the message.
      *
      * @param message the message
-     * @throws IOException most often occurs when the output class has been closed
+     * @throws IOException most often occurs when the output class has been
+     *                     closed
      */
     public abstract void write(String message) throws IOException;
 

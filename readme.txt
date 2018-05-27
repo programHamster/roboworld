@@ -25,4 +25,4 @@ Here are the settings of the operator. Use the desired implementation of "by.rob
 You can specify the trackerInitiator (in this way "operator.setTrackerInitiator(trackerInitiator())") if you want the operator to use trackers.
 
 Tracker option
-Determine tracker beans which you want the operator to use. Now available only "by.roboworld.model.bean.tracker.MonitorPerformanceTracker". Implement the "by.roboworld.model.bean.tracker.Tracker" interface if you want to add a tracker implementation.
+Determine tracker beans which you want the operator to use. Now available only "by.roboworld.model.bean.tracker.MonitorPerformanceTracker". Implement the "by.roboworld.model.bean.tracker.Tracker" interface if you want to add a tracker implementation. In the field "trackerPeriod" you can set the check frequency in milliseconds.

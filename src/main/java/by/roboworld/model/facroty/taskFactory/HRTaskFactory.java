@@ -13,10 +13,10 @@ public class HRTaskFactory extends TaskImplementationFactory {
      *
      * @return an array representing the nodes of available implementations.
      */
-    protected ImplementationNode[] getImplementationNodes(){
+    protected ImplementationNode[] getImplementationNodes() {
         ImplementationNode backImplementation = new ImplementationNode
                 (Constants.HR_TASK_VALUE, HRTask.class);
-        return new ImplementationNode[]{ backImplementation };
+        return new ImplementationNode[] { backImplementation };
     }
 
 }

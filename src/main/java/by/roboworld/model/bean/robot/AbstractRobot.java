@@ -16,22 +16,29 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * The robot is the thread, but it does not inherit the thread, but encapsulates it,
- * so that it is impossible to override the method run() in subclasses and thereby
- * disrupt the life cycle of the robot. The robot uses the lock to enable the standby
- * mode when no outstanding tasks for it.
+ * The robot is the thread, but it does not inherit the thread, but
+ * encapsulates it, so that it is impossible to override the method run() in
+ * subclasses and thereby disrupt the life cycle of the robot. The robot uses
+ * the lock to enable the standby mode when no outstanding tasks for it.
  */
 public abstract class AbstractRobot implements Robot {
-    /** This is private task board */
+    /** This is private task board. */
     private Board<Task> tasks = new TaskBoard<>();
-    /** The encapsulated thread of execution */
+    /** The encapsulated thread of execution. */
     private final Thread thread;
-    /** The lock for the standby mode */
+    /** The lock for the standby mode. */
     private final ReentrantLock lock = new ReentrantLock();
+    /** The condition for the standby mode. */
     private final Condition condition = lock.newCondition();
-    /** This flag indicates that the robot is activated and is in working condition */
+    /**
+     * This flag indicates that the robot is activated and is in working
+     * condition.
+     */
     private boolean isRunning = false;
-    /** This flag indicates that the robot is alive and can be started or it is already working */
+    /**
+     *  This flag indicates that the robot is alive and can be started or it is
+     *  already working.
+     */
     private boolean isAlive = true;
 
     /**
@@ -42,8 +49,8 @@ public abstract class AbstractRobot implements Robot {
     }
 
     /**
-     * This method describes a robot's life cycle. The lifecycle of the robot is divided on
-     * activation, running, shutdown and dead stages.
+     * This method describes a robot's life cycle. The lifecycle of the robot
+     * is divided on activation, running, shutdown and dead stages.
      */
     private void run(){
         try {
@@ -57,7 +64,8 @@ public abstract class AbstractRobot implements Robot {
         } finally {
             // shutdown stage
             shutdown();
-            // it is repeat outside of the method shutdown() to protect it from overriding
+            /* it is repeat outside of the method shutdown() to protect it from
+             overriding */
             isRunning = false;
             isAlive = false;
             // dead stage
@@ -65,9 +73,10 @@ public abstract class AbstractRobot implements Robot {
     }
 
     /**
-     * This method is used to initialize the robot before starting work. When overriding this
-     * method, the first line should be called {@code super.activation()} because robot need to grab
-     * a monitor for enable the standby mode.
+     * This method is used to initialize the robot before starting work. When
+     * overriding this method, the first line should be called
+     * {@code super.activation()} because robot need to grab a monitor for
+     * enable the standby mode.
      *
      * @throws RobotActuationException if the robot is already activated
      */
@@ -78,9 +87,10 @@ public abstract class AbstractRobot implements Robot {
     }
 
     /**
-     * Takes the task from the private task board and begins to perform. If the private task board is
-     * empty, it takes the task from the shared board and puts it in the private. If all tasks are completed,
-     * it switches to the standby mode.
+     * Takes the task from the private task board and begins to perform. If the
+     * private task board is empty, it takes the task from the shared board and
+     * puts it in the private. If all tasks are completed, it switches to the
+     * standby mode.
      *
      * @throws RobotDeadException if call the method after shutdown the robot
      */
@@ -89,7 +99,8 @@ public abstract class AbstractRobot implements Robot {
         if(task != null){
             task.perform();
             if(!thread.isInterrupted()){
-                OutputInformation.write("The robot \"" + getName() + "\" completed the task \"" + task.getName() + "\"");
+                OutputInformation.write("The robot \"" + getName() +
+                        "\" completed the task \"" + task.getName() + "\"");
             }
         } else {
             if(!takeSharedTask()){
@@ -99,13 +110,16 @@ public abstract class AbstractRobot implements Robot {
     }
 
     /**
-     * This method takes a task from a shared task board and puts it in the private. This is a part of the
-     * default behavior. It takes a task from a general task board because any robot can perform them.
-     * To avoid breaking this behavior, you must call {@code super.takeSharedTask()} when you override it.
-     * Returns <code>true</code> if some task is found.
+     * This method takes a task from a shared task board and puts it in the
+     * private. This is a part of the default behavior. It takes a task from
+     * a general task board because any robot can perform them. To avoid
+     * breaking this behavior, you must call {@code super.takeSharedTask()}
+     * when you override it.
      *
-     * @return <code>true</code> if some task is found, <code>false</code> otherwise
-     * @throws RobotDeadException if call the method after shutdown the robot and a task was found
+     * @return <code>true</code> if some task is found, <code>false</code>
+     *         otherwise
+     * @throws RobotDeadException if call the method after shutdown the robot
+     *                            and a task was found
      */
     protected boolean takeSharedTask() {
         boolean result = false;
@@ -117,9 +131,10 @@ public abstract class AbstractRobot implements Robot {
     }
 
     /**
-     * Use this method to free resources and to terminate the work of the robot. After calling this method,
-     * the robot will not be able to perform any work and is considered dead. When overriding this method,
-     * you must call {@code super.shutdown()}.
+     * Use this method to free resources and to terminate the work of the robot.
+     * After calling this method, the robot will not be able to perform any
+     * work and is considered dead. When overriding this method, you must call
+     * {@code super.shutdown()}.
      */
     protected void shutdown(){
         tasks = null;
@@ -153,7 +168,7 @@ public abstract class AbstractRobot implements Robot {
      *
      * @param name name of the robot
      */
-    public void setName(String name){
+    public void setName(final String name) {
         thread.setName(name);
     }
 
@@ -162,27 +177,29 @@ public abstract class AbstractRobot implements Robot {
      *
      * @return this robot's name.
      */
-    public String getName(){
+    public String getName() {
         return thread.getName();
     }
 
     /**
-     * Adds a task to the task board of the robot. If the robot started to turn off
-     * or already off, then throw the {@code RobotDeadException}. If the robot determines
-     * that it will not be able to perform this task, it will throw the {@code TaskNotFeasibleException}.
+     * Adds a task to the task board of the robot. If the robot started to turn
+     * off or already off, then throw the {@code RobotDeadException}. If the
+     * robot determines that it will not be able to perform this task, it will
+     * throw the {@code TaskNotFeasibleException}.
      *
      * @param task the task to the execute
-     * @return <code>true</code> if the task was added to the board successfully
-     *         and <code>false</code> otherwise
+     * @return <code>true</code> if the task was added to the board
+     *         successfully and <code>false</code> otherwise
      * @throws NullPointerException if the specified task is null
-     * @throws RobotDeadException if the robot started to turn off or already off
-     * @throws TaskNotFeasibleException if the robot determines that it will not be able
-     *                                  to perform this task
+     * @throws RobotDeadException if the robot started to turn off or already
+     *                            off
+     * @throws TaskNotFeasibleException if the robot determines that it will
+     *                                  not be able to perform this task
      */
-    public boolean addTask(Task task) {
+    public boolean addTask(final Task task) {
         Objects.requireNonNull(task, Constants.TASK_IS_NULL);
         checkLife();
-        if(checkTaskFeasibility(task)){
+        if (checkTaskFeasibility(task)) {
             return tasks.add(task);
         } else {
             throw new TaskNotFeasibleException(getName(), task);
@@ -190,11 +207,13 @@ public abstract class AbstractRobot implements Robot {
     }
 
     /**
-     * Retrieves, but does not remove, the first task from the private task board,
-     * or returns {@code null} if the task board is empty.
+     * Retrieves, but does not remove, the first task from the private task
+     * board, or returns {@code null} if the task board is empty.
      *
-     * @return the first task from the private task board, or {@code null} if the task board is empty
-     * @throws RobotDeadException if the robot started to turn off or already off
+     * @return the first task from the private task board, or {@code null} if
+     *          the task board is empty
+     * @throws RobotDeadException if the robot started to turn off or already
+     *                            off
      */
     protected final Task getTask() {
         checkLife();
@@ -202,10 +221,11 @@ public abstract class AbstractRobot implements Robot {
     }
 
     /**
-     * Retrieves and removes the first task from the private task board, or returns {@code null}
-     * if the task board is empty.
+     * Retrieves and removes the first task from the private task board, or
+     * returns {@code null} if the task board is empty.
      *
-     * @return the first task from the private task board, or {@code null} if the task board is empty
+     * @return the first task from the private task board, or {@code null} if
+     *          the task board is empty
      */
     protected final Task pollTask() {
         checkLife();
@@ -215,11 +235,12 @@ public abstract class AbstractRobot implements Robot {
     /**
      * Awakes a robot from the standby mode.
      *
-     * @throws RobotDeadException if the robot started to turn off or already off
+     * @throws RobotDeadException if the robot started to turn off or already
+     *                            off
      */
-    public final void wakeUp(){
+    public final void wakeUp() {
         checkLife();
-        if(lock.tryLock()){
+        if (lock.tryLock()) {
             try {
                 condition.signal();
             } finally {
@@ -231,7 +252,8 @@ public abstract class AbstractRobot implements Robot {
     /**
      * Activates the standby mode.
      *
-     * @throws RobotDeadException if the robot started to turn off or already off
+     * @throws RobotDeadException if the robot started to turn off or already
+     *                            off
      */
     protected final void await() {
         try {
@@ -249,19 +271,20 @@ public abstract class AbstractRobot implements Robot {
      * @return <code>true</code> if the robot can perform the specified task
      *          and <code>false</code> otherwise
      */
-    protected boolean checkTaskFeasibility(Task task){
+    protected boolean checkTaskFeasibility(final Task task) {
         RobotType taskType = RobotType.identifyRobotType(task);
         return taskType == getRobotType() || taskType == RobotType.GENERAL;
     }
 
     /**
-     * Returns <code>true</code> if the robot was ordered to die, but he did not have time to do it.
-     * This corresponds to the shutdown and dead stages.
+     * Returns <code>true</code> if the robot was ordered to die, but he did
+     * not have time to do it. This corresponds to the shutdown and dead
+     * stages.
      *
      * @return <code>true</code> if the robot was to kill himself;
      *          <code>false</code> otherwise.
      */
-    public final boolean isDie(){
+    public final boolean isDie() {
         return thread.isInterrupted() || !isAlive;
     }
 
@@ -271,7 +294,7 @@ public abstract class AbstractRobot implements Robot {
      * @throws RobotDeadException if the robot is dead.
      */
     private void checkLife() {
-        if(isDie() || tasks == null){
+        if (isDie() || tasks == null) {
             throw new RobotDeadException(this);
         }
     }
@@ -283,7 +306,7 @@ public abstract class AbstractRobot implements Robot {
      * @return <code>true</code> if the robot has created and not dead;
      *          <code>false</code> otherwise.
      */
-    public final boolean isAlive(){
+    public final boolean isAlive() {
         return isAlive;
     }
 
@@ -294,7 +317,7 @@ public abstract class AbstractRobot implements Robot {
      * @return <code>true</code> if the robot has activated and not dead;
      *          <code>false</code> otherwise.
      */
-    public final boolean isRunning(){
+    public final boolean isRunning() {
         return isRunning;
     }
 
@@ -302,19 +325,20 @@ public abstract class AbstractRobot implements Robot {
      * Robots are considered to be equal if their threads are equal.
      *
      * @param o the other robot
-     * @return <code>true</code> if robots are equal and <code>false</code> otherwise
+     * @return <code>true</code> if robots are equal and <code>false</code>
+     *                           otherwise
      */
-    public boolean equals(Object o){
-        if(o == null){
+    public boolean equals(final Object o) {
+        if (o == null) {
             return false;
         }
-        if(o == this){
+        if (o == this) {
             return true;
         }
-        if(!(o instanceof AbstractRobot)){
+        if (!(o instanceof AbstractRobot)) {
             return false;
         }
-        AbstractRobot robot = (AbstractRobot)o;
+        AbstractRobot robot = (AbstractRobot) o;
         return thread.equals(robot.thread);
     }
 
@@ -323,7 +347,7 @@ public abstract class AbstractRobot implements Robot {
      *
      * @return the hash code
      */
-    public int hashCode(){
+    public int hashCode() {
         return Objects.hash(thread, thread.getName());
     }
 

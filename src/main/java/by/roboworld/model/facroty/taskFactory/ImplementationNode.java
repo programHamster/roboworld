@@ -3,15 +3,17 @@ package by.roboworld.model.facroty.taskFactory;
 import by.roboworld.exception.Constants;
 import by.roboworld.model.bean.task.Task;
 
+import java.util.Objects;
+
 /**
- * This class is used to associate the implementation of the class with the name by which
- * it will be searched. This class is compared by the implementation name for a quick search
- * of the implementation class.
+ * This class is used to associate the implementation of the class with the
+ * name by which it will be searched. This class is compared by the
+ * implementation name for a quick search of the implementation class.
  */
 public class ImplementationNode implements Comparable<ImplementationNode> {
-    /** The name accorded to the implementation */
+    /** The name accorded to the implementation. */
     private final String implementationName;
-    /** The implementation class */
+    /** The implementation class. */
     private final Class<? extends Task> taskClass;
 
     /**
@@ -19,15 +21,12 @@ public class ImplementationNode implements Comparable<ImplementationNode> {
      *
      * @param implementationName implementation name
      * @param taskClass implementation class
-     * @throws NullPointerException if implementation name or class is <code>null</code>
+     * @throws NullPointerException if implementation name or class is
+     *                              <code>null</code>
      */
     public ImplementationNode(String implementationName, Class<? extends Task> taskClass) {
-        if(implementationName == null){
-            throw new NullPointerException(Constants.IMPLEMENTATION_NAME_IS_NULL);
-        }
-        if(taskClass == null){
-            throw new NullPointerException(Constants.IMPLEMENTATION_CLASS_IS_NULL);
-        }
+        Objects.requireNonNull(implementationName, Constants.IMPLEMENTATION_NAME_IS_NULL);
+        Objects.requireNonNull(taskClass, Constants.IMPLEMENTATION_CLASS_IS_NULL);
         this.implementationName = implementationName;
         this.taskClass = taskClass;
     }
@@ -37,7 +36,7 @@ public class ImplementationNode implements Comparable<ImplementationNode> {
      *
      * @return a implementation name
      */
-    public String getImplementationName(){
+    public String getImplementationName() {
         return implementationName;
     }
 
@@ -51,13 +50,14 @@ public class ImplementationNode implements Comparable<ImplementationNode> {
     }
 
     /**
-     * Returns a result of the comparison of names of implementations. This class is compared
-     * by the implementation name for a quick search of the implementation class.
+     * Returns a result of the comparison of names of implementations. This
+     * class is compared by the implementation name for a quick search of the
+     * implementation class.
      *
      * @param node other implementation node
      * @return a result of the comparison of names of implementations
      */
-    public int compareTo(ImplementationNode node){
+    public int compareTo(ImplementationNode node) {
         return implementationName.compareTo(node.implementationName);
     }
 }

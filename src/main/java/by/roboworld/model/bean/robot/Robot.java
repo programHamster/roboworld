@@ -34,17 +34,19 @@ public interface Robot {
     String getName();
 
     /**
-     * Adds a task to the task queue of the robot. If the robot started to turn off
-     * or already off, then throw the {@code RobotDeadException}. If the robot determines
-     * that it will not be able to perform this task, it will throw the {@code TaskNotFeasibleException}.
+     * Adds a task to the task queue of the robot. If the robot started to turn
+     * off or already off, then throw the {@code RobotDeadException}. If the
+     * robot determines that it will not be able to perform this task, it will
+     * throw the {@code TaskNotFeasibleException}.
      *
      * @param task the task to the execute
-     * @return <code>true</code> if the task was added to the queue successfully
-     *         and <code>false</code> otherwise
+     * @return <code>true</code> if the task was added to the queue
+     *         successfully and <code>false</code> otherwise
      * @throws NullPointerException if the specified task is null
-     * @throws RobotDeadException if the robot started to turn off or already off
-     * @throws TaskNotFeasibleException if the robot determines that it will not be able
-     *                                  to perform this task
+     * @throws RobotDeadException if the robot started to turn off or already
+     *                            off
+     * @throws TaskNotFeasibleException if the robot determines that it will
+     *                                  not be able to perform this task
      */
     boolean addTask(Task task);
 

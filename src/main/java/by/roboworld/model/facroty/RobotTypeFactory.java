@@ -7,7 +7,8 @@ import by.roboworld.exception.unsupported.UnsupportedRobotTypeException;
 import java.util.Objects;
 
 /**
- * This factory is designed to determine the particular type of robot by its name.
+ * This factory is designed to determine the particular type of robot by its
+ * name.
  */
 public abstract class RobotTypeFactory {
 
@@ -16,15 +17,18 @@ public abstract class RobotTypeFactory {
      *
      * @param robotType name of the robot type
      * @return a robot type by the specified name
-     * @throws UnsupportedRobotTypeException if the specified robot name is wrong
-     * @throws RobotTypeNotSpecifiedException if the specified name of the robot is <code>null</code>
+     * @throws UnsupportedRobotTypeException if the specified robot name is
+     *                                       wrong
+     * @throws RobotTypeNotSpecifiedException if the specified name of the
+     *                                        robot is <code>null</code>
      */
-    public static RobotType getRobotTypeFromFactory(String robotType) throws UnsupportedRobotTypeException{
+    public static RobotType getRobotTypeFromFactory(String robotType)
+            throws UnsupportedRobotTypeException {
         Objects.requireNonNull(robotType, "Robot type is null");
-        if(robotType.isEmpty()){
+        if (robotType.isEmpty()) {
             throw new RobotTypeNotSpecifiedException();
         }
-        switch (robotType){
+        switch (robotType) {
             case Constants.BACK_END_ROBOT_VALUE:
                 return RobotType.BACK_END_DEVELOPER;
             case Constants.FRONT_END_ROBOT_VALUE:

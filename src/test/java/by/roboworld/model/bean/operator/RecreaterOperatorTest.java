@@ -94,19 +94,25 @@ public class RecreaterOperatorTest {
         // arrange
         RecreaterOperator operator = new RecreaterOperator();
         Robot robot = operator.createRobot((RobotType)tasks[0]);
+        Task task = spy((Task)tasks[1]);
+        // act
+        operator.assignTask(task, robot.getName());
         // assert
-        assertTrue(operator.assignTask((Task)tasks[1], robot.getName()));
+        // wait until the task started to perform
+        verify(task, timeout(500)).perform();
     }
 
     @Test
     public void assignTask_generalTaskForAllRobot() {
         // arrange
         RecreaterOperator operator = new RecreaterOperator();
-        Task generalTask = new DieTask();
         for(RobotType type : RobotType.values()){
             Robot robot = operator.createRobot(type);
+            Task generalTask = spy(new DieTask());
             // assert
-            assertTrue(operator.assignTask(generalTask, robot.getName()));
+            operator.assignTask(generalTask, robot.getName());
+            // waiting for the robot to self-destruct
+            verify(generalTask, timeout(500)).perform();
         }
     }
 
@@ -117,7 +123,8 @@ public class RecreaterOperatorTest {
         Robot generalRobot = operator.createRobot(RobotType.GENERAL);
         Task backTask = new BackEndTask();
         // assert
-        assertTrue(operator.assignTask(backTask, generalRobot.getName()));
+        operator.assignTask(backTask, generalRobot.getName());
+
     }
 
     @Test(expected = TaskNotFeasibleException.class)
@@ -127,9 +134,7 @@ public class RecreaterOperatorTest {
         Robot robot = operator.createRobot(RobotType.BACK_END_DEVELOPER);
         Task task = new FrontEndTask();
         // act
-        boolean success = operator.assignTask(task, robot.getName());
-        // assert
-        assertTrue(success);
+        operator.assignTask(task, robot.getName());
     }
 
     @Test(expected = NullPointerException.class)

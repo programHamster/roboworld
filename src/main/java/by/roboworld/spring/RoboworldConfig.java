@@ -20,45 +20,49 @@ import javax.annotation.PostConstruct;
 public class RoboworldConfig {
 
     /**
-     * Returns an operator through which robots will be managed. In this method, you can specify the
-     * necessary implementation of the operator and set a necessary values.
+     * Returns an operator through which robots will be managed. In this
+     * method, you can specify the necessary implementation of the operator
+     * and set a necessary values.
      *
      * @return an operator through which robots will be managed
      */
     @Bean
-    public Operator operator(){
+    public Operator operator() {
         AbstractOperator operator = new RecreaterOperator(true);
         operator.setTrackerInitiator(trackerInitiator());
         return operator;
     }
 
     /**
-     * Returns a tracker, which will monitor robots. In this method, you can specify the necessary
-     * implementation of the tracker and set a necessary values.
+     * Returns a tracker, which will monitor robots. In this method, you can
+     * specify the necessary implementation of the tracker and set a necessary
+     * values.
      *
      * @return a tracker, which will monitor robots
      */
     @Bean
-    public Tracker tracker(){
-        final int TRACKER_PERIOD = 5000;
-        return new MonitorPerformanceTracker(TRACKER_PERIOD);
+    public Tracker tracker() {
+        final int trackerPeriod = 5000;
+        return new MonitorPerformanceTracker(trackerPeriod);
     }
 
     /**
      * In this method, you can set the output method about roboworld.
      */
     @PostConstruct
-    public void initOutput(){
+    public void initOutput() {
         OutputInformation.installOutput(new WebSocketOutput());
     }
 
     /**
-     * Returns trackerInitiator which notifies trackers about the broadcast event.
+     * Returns trackerInitiator which notifies trackers about the broadcast
+     * event.
      *
-     * @return trackerInitiator which notifies trackers about the broadcast event
+     * @return trackerInitiator which notifies trackers about the broadcast
+     *         event
      */
     @Bean
-    public TrackerInitiator trackerInitiator(){
+    public TrackerInitiator trackerInitiator() {
         return new TrackerInitiator();
     }
 

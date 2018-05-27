@@ -11,6 +11,11 @@
 
     <properties>
         <spring.version>5.0.6.RELEASE</spring.version>
+        <jackson.version>2.9.5</jackson.version>
+        <websocket.version>1.1</websocket.version>
+        <slf4j.version>2.11.0</slf4j.version>
+        <junit.version>4.12</junit.version>
+        <mockito.version>1.9.5</mockito.version>
     </properties>
 
     <dependencies>
@@ -23,13 +28,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.5</version>
+            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>
             <groupId>javax.websocket</groupId>
             <artifactId>javax.websocket-api</artifactId>
-            <version>1.1</version>
+            <version>${websocket.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -55,15 +60,21 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
 
     </dependencies>

@@ -13,10 +13,10 @@ public class GeneralTaskFactory extends TaskImplementationFactory {
      *
      * @return an array representing the nodes of available implementations.
      */
-    protected ImplementationNode[] getImplementationNodes(){
+    protected ImplementationNode[] getImplementationNodes() {
         ImplementationNode backImplementation = new ImplementationNode
                 (Constants.DIE_TASK_VALUE, DieTask.class);
-        return new ImplementationNode[]{ backImplementation };
+        return new ImplementationNode[] { backImplementation };
     }
 
 }

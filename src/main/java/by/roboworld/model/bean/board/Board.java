@@ -13,7 +13,8 @@ public interface Board<T extends Task> {
 
     /**
      * Inserts the specified task into this board.
-     * Returns {@code true} if insertion is successful and {@code false} otherwise.
+     * Returns {@code true} if insertion is successful and {@code false}
+     * otherwise.
      *
      * @param task the task to add
      * @return <tt>true</tt> if this board changed as a result of the call
@@ -22,10 +23,11 @@ public interface Board<T extends Task> {
     boolean add(T task);
 
     /**
-     * Retrieves and removes the first task of this board (which longest time in the board),
-     * or returns {@code null} if this board is empty.
+     * Retrieves and removes the first task of this board (which longest time
+     * in the board), or returns {@code null} if this board is empty.
      *
-     * @return the first task of this board, or {@code null} if this board is empty
+     * @return the first task of this board, or {@code null} if this board is
+     *         empty
      */
     T poll();
 
@@ -33,7 +35,8 @@ public interface Board<T extends Task> {
      * Retrieves, but does not remove, the first task of this board,
      * or returns {@code null} if this board is empty.
      *
-     * @return the first task of this board, or {@code null} if this board is empty
+     * @return the first task of this board, or {@code null} if this board is
+     *         empty
      */
     T get();
 

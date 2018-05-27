@@ -1,6 +1,8 @@
 package by.roboworld.websocket;
 
 import by.roboworld.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnOpen;
@@ -11,21 +13,25 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This class implements the subscription of users to receive messages from the server.
+ * This class implements the subscription of users to receive messages from the
+ * server.
  */
-@ServerEndpoint(value= Constants.MESSAGE_URL, configurator = ChatEndpointConfigurator.class)
+@ServerEndpoint(value = Constants.MESSAGE_URL, configurator = ChatEndpointConfigurator.class)
 public class ChatEndpoint {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChatEndpoint.class);
 
-    /** stores signed user sessions */
+    /** Stores signed user sessions. */
     private final Set<Session> userSessions = Collections.synchronizedSet(new HashSet<>());
 
     @OnOpen
-    public void onOpen(Session userSession){
+    public void onOpen(Session userSession) {
+        LOGGER.info("Session " + userSession.getId() + " subscribed");
         userSessions.add(userSession);
     }
 
     @OnClose
-    public void onClose(Session userSession){
+    public void onClose(Session userSession) {
+        LOGGER.info("Session " + userSession.getId() + " unsubscribed");
         userSessions.remove(userSession);
     }
 
@@ -34,7 +40,7 @@ public class ChatEndpoint {
      *
      * @return an unmodifiable set of user sessions
      */
-    public Set<Session> getUserSessions(){
+    public Set<Session> getUserSessions() {
         return Collections.unmodifiableSet(userSessions);
     }
 

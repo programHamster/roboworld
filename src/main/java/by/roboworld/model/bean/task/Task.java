@@ -1,7 +1,7 @@
 package by.roboworld.model.bean.task;
 
 /**
- * This interface represents a task that can be performed by the robots
+ * This interface represents a task that can be performed by the robots.
  */
 public interface Task {
 

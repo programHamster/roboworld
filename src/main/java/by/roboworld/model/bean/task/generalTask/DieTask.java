@@ -8,14 +8,16 @@ import by.roboworld.output.OutputInformation;
  */
 public class DieTask extends AbstractTask implements GeneralTask {
 
-    public DieTask(){}
-    public DieTask(String name){
+    public DieTask() {}
+
+    public DieTask(String name) {
         super(name);
     }
 
-    public void perform(){
+    public void perform() {
         Thread thread = Thread.currentThread();
-        OutputInformation.write("The robot \"" + thread.getName() + "\" is dead.");
+        OutputInformation.write("The robot \"" + thread.getName() +
+                "\" is dead.");
         thread.interrupt();
     }
 

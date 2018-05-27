@@ -11,13 +11,14 @@ import java.io.Writer;
 import java.util.Objects;
 
 /**
- * This class is used to display information about what is happening in the game world.
- * The default way to display information is the console ({@code System.out.println()}.
- * For change the way information is displayed, you must implement it in method {@code write(String message)}
- * and associate it with a specific name.
+ * This class is used to display information about what is happening in the
+ * game world. The default way to display information is the console
+ * ({@code System.out.println()}. For change the way information is displayed,
+ * you must implement it in method {@code write(String message)} and associate
+ * it with a specific name.
  */
 public abstract class OutputInformation {
-    /** The default way to display information */
+    /** The default way to display information. */
     private static Output output = new StreamOutput();
 
     /**
@@ -36,7 +37,7 @@ public abstract class OutputInformation {
      *
      * @param printStream a PrintStream
      */
-    public static void setOutputStream(OutputStream printStream){
+    public static void setOutputStream(OutputStream printStream) {
         Objects.requireNonNull(printStream);
         StreamOutput.setOutputStream(printStream);
     }
@@ -46,7 +47,7 @@ public abstract class OutputInformation {
      *
      * @param writer a Writer
      */
-    public static void setWriter(Writer writer){
+    public static void setWriter(Writer writer) {
         Objects.requireNonNull(writer);
         WriterOutput.setWriter(writer);
     }
@@ -57,7 +58,7 @@ public abstract class OutputInformation {
      * @param message message to output
      * @throws UncheckedIOException if the output was closed
      */
-    public static void write(String message){
+    public static void write(String message) {
         try {
             output.write(message);
         } catch (IOException e) {
@@ -66,15 +67,17 @@ public abstract class OutputInformation {
     }
 
     /**
-     * Adds the specified event key to the message and sends it to the output. If the status or number of robots
-     * or tasks changed, necessary specify the appropriate event to trigger data refresh on the client side.
+     * Adds the specified event key to the message and sends it to the output.
+     * If the status or number of robots or tasks changed, necessary specify
+     * the appropriate event to trigger data refresh on the client side.
      *
      * @param message message to output
      * @param event event occurred in the game world
      * @throws NullPointerException if the specified event is <code>null</code>
-     * @throws IllegalArgumentException if the output name is not associated with the output way
+     * @throws IllegalArgumentException if the output name is not associated
+     *                                  with the output way
      */
-    public static void write(String message, RoboWorldEvent event){
+    public static void write(String message, RoboworldEvent event) {
         Objects.requireNonNull(event, by.roboworld.exception.Constants.EVENT_IS_NULL);
         String newMessage = event.name().toLowerCase() + Constants.KEY_DELIMITER + message;
         write(newMessage);

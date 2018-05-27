@@ -8,23 +8,26 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * The class describes common actions for all special tasks.
  */
-public abstract class AbstractSpecialTask extends AbstractTask implements SpecialTask {
-    /** These constants define the time range for the task */
-    private final int MIN_PERFORMING_TIME = 500;
-    private final int MAX_PERFORMING_TIME = 2000;
+public abstract class AbstractSpecialTask extends AbstractTask
+        implements SpecialTask {
 
-    public AbstractSpecialTask(){}
-    public AbstractSpecialTask(String name){
+    public AbstractSpecialTask() {}
+
+    public AbstractSpecialTask(final String name) {
         super(name);
     }
 
     /**
      * The method simulates the perform of a task.
      *
-     * @throws TaskNotFeasibleException if the {@code InterruptedException} occurs
+     * @throws TaskNotFeasibleException if the {@code InterruptedException}
+     *                                  occurs
      */
-    public void perform(){
-        int performingTime = ThreadLocalRandom.current().nextInt(MIN_PERFORMING_TIME, MAX_PERFORMING_TIME);
+    public void perform() {
+        final int minPerformingTime = 500;
+        final int maxPerformingTime = 2000;
+        int performingTime = ThreadLocalRandom.current()
+                .nextInt(minPerformingTime, maxPerformingTime);
         try {
             Thread.sleep(performingTime);
         } catch (InterruptedException e) {

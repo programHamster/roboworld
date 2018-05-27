@@ -4,10 +4,6 @@ public abstract class Constants {
     //                   Controllers
     public static final String MESSAGE_URL = "/chat";
     public static final String MAIN_URL = "/main";
-    public static final int ERROR_STATUS_CODE = 500;
-    public static final String HEADER_KEY_JSON = "Content-Type";
-    public static final String HEADER_VALUE_JSON = "application/json";
-    public static final String PARAM_NAME_INIT = "need";
     public static final String PARAM_VALUE_TASKS_INIT = "tasks";
     public static final String PARAM_VALUE_ROBOTS_INIT = "robots";
     public static final String EMPTY = "";
@@ -35,8 +31,6 @@ public abstract class Constants {
     public static final String HR_ROBOT_VALUE = "hr";
     public static final String GENERAL_ROBOT_VALUE = "general";
     public static final String PARAM_NAME_ROBOT_NAME = "robotName";
-    //                   factories
-    public static final String PARAM_DELIMITER = ",";
     //                   output
     public static final String KEY_DELIMITER = ":";
 }

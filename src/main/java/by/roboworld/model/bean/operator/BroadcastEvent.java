@@ -10,8 +10,8 @@ import java.util.Objects;
  * This class describes the broadcast event for trackers.
  */
 public class BroadcastEvent extends ApplicationEvent {
-    /** the type of robot for which the broadcast occurred */
-    private RobotType type;
+    /** The type of robot for which the broadcast occurred. */
+    private final RobotType type;
 
     /**
      * Constructor initializes fields.
@@ -19,7 +19,7 @@ public class BroadcastEvent extends ApplicationEvent {
      * @param operator an operator performing the broadcasting
      * @param type type of robots for which broadcasting is performed
      */
-    public BroadcastEvent(Operator operator, RobotType type){
+    public BroadcastEvent(final Operator operator, final RobotType type) {
         super(operator);
         Objects.requireNonNull(type, Constants.ROBOT_TYPE_IS_NULL);
         this.type = type;
@@ -40,7 +40,7 @@ public class BroadcastEvent extends ApplicationEvent {
      * @return operator performing the broadcasting
      */
     @Override
-    public Operator getSource(){
-        return (Operator)super.getSource();
+    public Operator getSource() {
+        return (Operator) super.getSource();
     }
 }

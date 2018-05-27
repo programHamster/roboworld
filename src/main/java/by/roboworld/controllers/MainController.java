@@ -15,7 +15,9 @@ import by.roboworld.model.facroty.RobotType;
 import by.roboworld.model.facroty.RobotTypeFactory;
 import by.roboworld.model.facroty.taskFactory.TaskFactory;
 import by.roboworld.output.OutputInformation;
-import by.roboworld.output.RoboWorldEvent;
+import by.roboworld.output.RoboworldEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,15 +29,20 @@ import java.net.URLDecoder;
 import java.util.Map;
 
 /**
- * This controller is designed to provide information about robots and tasks, as well as executing commands
- * sent by the user.
+ * This controller is designed to provide information about robots and tasks,
+ * as well as executing commands sent by the user.
  */
 @RestController
 @RequestMapping(Constants.MAIN_URL)
 public class MainController {
-    /** the operator who will carry out the management of robots */
-    @Autowired
+    /** The operator who will carry out the management of robots. */
     private Operator operator;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
+
+    @Autowired
+    public void setOperator(Operator operator) {
+        this.operator = operator;
+    }
 
     /**
      * Returns robots belonging to the operator.
@@ -62,7 +69,8 @@ public class MainController {
      *
      * @param robotTypeName name corresponding to the type of robot
      * @param robotName robot name
-     * @throws UnsupportedRobotTypeException if cannot determine the type of robot
+     * @throws UnsupportedRobotTypeException if cannot determine the type of
+     *                                       robot
      */
     @PostMapping(value = "/robots")
     public void createRobot(@RequestParam(Constants.PARAM_NAME_ROBOT_TYPE) String robotTypeName,
@@ -70,13 +78,14 @@ public class MainController {
             throws UnsupportedRobotTypeException {
         RobotType robotType = RobotTypeFactory.getRobotTypeFromFactory(robotTypeName);
         Robot robot = operator.createRobot(robotType, decodeURIComponent(robotName));
-        OutputInformation.write("Robot \"" + robot.getName() + "\" created", RoboWorldEvent.ROBOT);
+        OutputInformation.write("Robot \"" + robot.getName() + "\" created", RoboworldEvent.ROBOT);
     }
 
     /**
      * Creates a task with the specified type and name.
      *
-     * @param taskImplementation name of the task implementation corresponding to a particular task class
+     * @param taskImplementation name of the task implementation corresponding
+     *                          to a particular task class
      * @param taskName name of task
      * @throws UnsupportedTaskException if cannot determine the type of task
      */
@@ -87,11 +96,12 @@ public class MainController {
         taskName = decodeURIComponent(taskName);
         Task task = TaskFactory.getTaskFromFactory(taskImplementation, taskName);
         TaskHolder.getInstance().putTask(task);
-        OutputInformation.write("Task \"" + task.getName() + "\" created", RoboWorldEvent.TASK);
+        OutputInformation.write("Task \"" + task.getName() + "\" created", RoboworldEvent.TASK);
     }
 
     /**
-     * Assigns a task with the specified name to a robot with the specified name.
+     * Assigns a task with the specified name to a robot with the specified
+     * name.
      *
      * @param taskName name of task
      * @param robotName name of robot
@@ -103,9 +113,9 @@ public class MainController {
         taskName = decodeURIComponent(taskName);
         Robot robot = operator.get(robotName);
         Task task = TaskHolder.getInstance().getTask(taskName, robot.getRobotType());
-        if(task == null){
+        if (task == null) {
             task = TaskHolder.getInstance().totalSearch(taskName);
-            if(task != null){
+            if (task != null) {
                 throw new TaskNotFeasibleException(robotName, task);
             } else {
                 throw new TaskNotFoundException(taskName);
@@ -114,17 +124,18 @@ public class MainController {
         try {
             operator.assignTask(task, robotName);
         } catch (RobotDeadException e) {
-            OutputInformation.write(e.getMessage(), RoboWorldEvent.ROBOT);
+            OutputInformation.write(e.getMessage(), RoboworldEvent.ROBOT);
         }
     }
 
     /**
-     * Broadcasts to all robots of the specified type that it is necessary to perform
-     * the task with the specified name.
+     * Broadcasts to all robots of the specified type that it is necessary to
+     * perform the task with the specified name.
      *
      * @param taskName name of task
      * @param robotTypeName name corresponding to the type of robot
-     * @throws UnsupportedRobotTypeException if cannot determine the type of robot
+     * @throws UnsupportedRobotTypeException if cannot determine the type of
+     *                                       robot
      */
     @PostMapping(value = "/broadcast")
     public void broadcastTask(@RequestParam(Constants.PARAM_NAME_TASK_NAME) String taskName,
@@ -133,7 +144,7 @@ public class MainController {
         RobotType robotType = RobotTypeFactory.getRobotTypeFromFactory(robotTypeName);
         taskName = decodeURIComponent(taskName);
         Task task = TaskHolder.getInstance().getTask(taskName, robotType);
-        if(task == null){
+        if (task == null) {
             throw new TaskNotFoundException(taskName);
         }
         operator.broadcastTask(task);
@@ -142,11 +153,13 @@ public class MainController {
     /**
      * Returns a response with a message if an error occurs.
      *
-     * @param ex the exception is transmitted automatically by means of the Spring MVC
+     * @param ex the exception is transmitted automatically by means of the
+     *          Spring MVC
      * @return response with a message if an error occurs
      */
     @ExceptionHandler({UnsupportedException.class, RuntimeException.class})
-    public ResponseEntity<String> getMessageFromException(Exception ex){
+    public ResponseEntity<String> getMessageFromException(Exception ex) {
+        LOGGER.info(ex.getMessage(), ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -158,16 +171,15 @@ public class MainController {
      * @param str The UTF-8 encoded String to be decoded
      * @return the decoded String
      */
-    private static String decodeURIComponent(String str){
+    private static String decodeURIComponent(String str) {
         if (str == null) {
             return null;
         }
         String result;
         try {
             result = URLDecoder.decode(str, "UTF-8");
-        }
-        // This exception should never occur.
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
+            // This exception should never occur.
             result = str;
         }
         return result;

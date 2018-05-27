@@ -7,7 +7,7 @@ import by.roboworld.model.facroty.RobotType;
  */
 public class GeneralRobot extends AbstractRobot {
 
-    public RobotType getRobotType(){
+    public RobotType getRobotType() {
         return RobotType.GENERAL;
     }
 }

@@ -8,7 +8,8 @@ import java.io.Writer;
 import java.util.Objects;
 
 /**
- * Implementation for write a message through subclasses <code>OutputStream</code>
+ * Implementation for write a message through subclasses
+ * <code>OutputStream</code>.
  */
 public class WriterOutput extends Output {
     private static Writer writer;
@@ -19,7 +20,7 @@ public class WriterOutput extends Output {
      * @param writer implementation of <code>OutputStream</code>
      * @throws NullPointerException if the specified Writer is <code>null</code>
      */
-    public static void setWriter(Writer writer){
+    public static void setWriter(Writer writer) {
         Objects.requireNonNull(writer);
         WriterOutput.writer = writer;
     }

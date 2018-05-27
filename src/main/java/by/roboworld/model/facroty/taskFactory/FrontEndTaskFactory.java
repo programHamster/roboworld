@@ -13,10 +13,10 @@ public class FrontEndTaskFactory extends TaskImplementationFactory {
      *
      * @return an array representing the nodes of available implementations.
      */
-    protected ImplementationNode[] getImplementationNodes(){
+    protected ImplementationNode[] getImplementationNodes() {
         ImplementationNode backImplementation = new ImplementationNode
                 (Constants.FRONT_END_TASK_VALUE, FrontEndTask.class);
-        return new ImplementationNode[]{ backImplementation };
+        return new ImplementationNode[] { backImplementation };
     }
 
 }

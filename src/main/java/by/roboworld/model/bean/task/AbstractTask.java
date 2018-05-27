@@ -9,19 +9,19 @@ import java.util.concurrent.atomic.AtomicInteger;
  * This class describes common actions specific to each task.
  */
 public abstract class AbstractTask implements Task {
-    /** the total task count */
-    private static volatile AtomicInteger totalCount = new AtomicInteger();
-    /** task id */
-    private final int ID;
-    /** task name */
+    /** The total task count. */
+    private static final AtomicInteger TOTAL_COUNT = new AtomicInteger();
+    /** Task id. */
+    private final int id;
+    /** Task name. */
     private String name;
 
     /**
-     * The constructor initialises the task ID and name.
+     * The constructor initialises the task id and name.
      */
     public AbstractTask() {
-        ID = totalCount.incrementAndGet();
-        name = Constants.TASK + ID;
+        id = TOTAL_COUNT.incrementAndGet();
+        name = Constants.TASK + id;
     }
 
     /**
@@ -29,7 +29,7 @@ public abstract class AbstractTask implements Task {
      *
      * @param name task name
      */
-    public AbstractTask(String name){
+    public AbstractTask(final String name) {
         this();
         setName(name);
     }
@@ -48,40 +48,40 @@ public abstract class AbstractTask implements Task {
      *
      * @param name a new name for the task
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         Objects.requireNonNull(name, by.roboworld.exception.Constants.TASK_NAME_IS_NULL);
         this.name = name;
     }
 
     /**
-     * Returns the unique ID of the task.
+     * Returns the unique id of the task.
      *
-     * @return the unique ID of the task
+     * @return the unique id of the task
      */
-    public int getId(){
-        return ID;
+    public int getId() {
+        return id;
     }
 
-    public String toString(){
-        return "Task" + ID + ";" + name;
+    public String toString() {
+        return "Task" + id + ";" + name;
     }
 
-    public boolean equals(Object o){
-        if(o == null){
+    public boolean equals(final Object o) {
+        if (o == null) {
             return false;
         }
-        if(o == this){
+        if (o == this) {
             return true;
         }
-        if(!(o instanceof AbstractTask)){
+        if (!(o instanceof AbstractTask)) {
             return false;
         }
-        AbstractTask task = (AbstractTask)o;
-        return task.ID == ID && task.name.equals(name);
+        AbstractTask task = (AbstractTask) o;
+        return task.id == id && task.name.equals(name);
     }
 
-    public int hashCode(){
-        return Objects.hash(name, ID);
+    public int hashCode() {
+        return Objects.hash(name, id);
     }
 
 }

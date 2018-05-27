@@ -8,19 +8,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
- * Implementation for write a message through subclasses <code>OutputStream</code>
+ * Implementation for write a message through subclasses
+ * <code>OutputStream</code>.
  */
 public class StreamOutput extends Output {
-    /** The default output stream */
+    /** The default output stream. */
     private static OutputStream outputStream = System.out;
 
     /**
      * Sets implementation of <code>OutputStream</code>.
      *
      * @param outputStream implementation of <code>OutputStream</code>
-     * @throws NullPointerException if the specified outputStream is <code>null</code>
+     * @throws NullPointerException if the specified outputStream is
+     *                              <code>null</code>
      */
-    public static void setOutputStream(OutputStream outputStream){
+    public static void setOutputStream(OutputStream outputStream) {
         Objects.requireNonNull(outputStream);
         StreamOutput.outputStream = outputStream;
     }

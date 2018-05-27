@@ -4,11 +4,11 @@ import by.roboworld.model.bean.robot.AbstractSpecialRobot;
 import by.roboworld.model.facroty.RobotType;
 
 /**
- * The robot is trained to perform HR tasks
+ * The robot is trained to perform HR tasks.
  */
 public class HRRobot extends AbstractSpecialRobot {
 
-    public RobotType getRobotType(){
+    public RobotType getRobotType() {
         return RobotType.HR;
     }
 

@@ -3,27 +3,52 @@ package by.roboworld.output.implementation;
 import by.roboworld.output.Output;
 import by.roboworld.websocket.ChatEndpoint;
 import by.roboworld.websocket.ChatEndpointConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
-import java.io.IOException;
 
 /**
- * Implementation for write a message through <code>WebSocket</code>
+ * Implementation for write a message through <code>WebSocket</code>.
  */
 public class WebSocketOutput extends Output {
-    private ChatEndpoint chat = new ChatEndpointConfigurator().getEndpointInstance(ChatEndpoint .class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketOutput.class);
 
+    private ChatEndpoint chat = new ChatEndpointConfigurator()
+            .getEndpointInstance(ChatEndpoint.class);
+
+    /**
+     * Writes the message. This method is synchronized because an
+     * <code>java.lang.IllegalStateException</code> exception is thrown when a
+     * message is sent to the same session at the same time.
+     *
+     * @param message the message
+     */
     @Override
-    public void write(String message) throws IOException {
-        if(!Thread.currentThread().isInterrupted()){
-            for(Session session : chat.getUserSessions()){
-                session.getBasicRemote().sendText(message);
+    public synchronized void write(String message) {
+        LOGGER.info("writing message : " + message);
+        final long timeout = 2000;
+        if (!Thread.currentThread().isInterrupted()) {
+            for (Session session : chat.getUserSessions()) {
+                // double check: ensure session is still open
+                if (session.isOpen()) {
+                    RemoteEndpoint.Async async = session.getAsyncRemote();
+                    async.setSendTimeout(timeout);
+                    async.sendText(message, result -> {
+                        if (!result.isOK()) {
+                            Throwable t = result.getException();
+                            LOGGER.error(t.getMessage(), t);
+                        }
+                    });
+                }
             }
         }
     }
 
     @Override
-    public void close(){
+    public void close() {
+        LOGGER.debug("WebSocketOutput closed");
         chat = null;
     }
 }

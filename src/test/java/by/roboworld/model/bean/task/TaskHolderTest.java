@@ -22,14 +22,14 @@ public class TaskHolderTest {
         // arrange
         final int NUMBER_THREADS = 5;
         ExecutorService executor = Executors.newFixedThreadPool(NUMBER_THREADS);
-        List<Callable<TaskHolder>> callables = new ArrayList<>(NUMBER_THREADS);
+        List<Callable<TaskHolder>> callableHolders = new ArrayList<>(NUMBER_THREADS);
         final boolean[] result = new boolean[1];
         result[0] = true;
         for(int i=0; i<NUMBER_THREADS; i++){
-            callables.add(TaskHolder::getInstance);
+            callableHolders.add(TaskHolder::getInstance);
         }
         // act
-        List<Future<TaskHolder>> futures = executor.invokeAll(callables);
+        List<Future<TaskHolder>> futures = executor.invokeAll(callableHolders);
         futures.stream().map(future -> {
             TaskHolder holder = null;
             try {

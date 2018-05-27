@@ -24,7 +24,7 @@ public class RobotNotFoundException extends RuntimeException {
     public String getMessage(){
         String message;
         if(robotName != null){
-            message = "robot " + (robotName == null ? "" : ("named \"" + robotName + "\" ")) + "not found";
+            message = "robot named \"" + robotName + "\" not found";
         } else {
             message = super.getMessage();
         }

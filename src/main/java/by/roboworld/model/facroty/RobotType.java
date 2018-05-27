@@ -14,36 +14,37 @@ import by.roboworld.model.bean.task.specialTask.HRTask;
 import java.util.Objects;
 
 /**
- * This enum describes the available implementations of robots. Each implementation of robot must
- * define classes (superclasses) of tasks with which it can work.
+ * This enum describes the available implementations of robots. Each
+ * implementation of robot must define classes (superclasses) of tasks with
+ * which it can work.
  */
 public enum RobotType {
-    BACK_END_DEVELOPER{
-        public Class<?>[] getFeasibleTasks(){
+    BACK_END_DEVELOPER {
+        public Class<?>[] getFeasibleTasks() {
             return new Class<?>[]{BackEndTask.class};
         }
-        public Robot getRobot(){
+        public Robot getRobot() {
             return new BackEndDeveloperRobot();
         }
-    }, FRONT_END_DEVELOPER{
-        public Class<?>[] getFeasibleTasks(){
+    }, FRONT_END_DEVELOPER {
+        public Class<?>[] getFeasibleTasks() {
             return new Class<?>[]{FrontEndTask.class};
         }
-        public Robot getRobot(){
+        public Robot getRobot() {
             return new FrontEndDeveloperRobot();
         }
-    }, HR{
-        public Class<?>[] getFeasibleTasks(){
+    }, HR {
+        public Class<?>[] getFeasibleTasks() {
             return new Class<?>[]{HRTask.class};
         }
-        public Robot getRobot(){
+        public Robot getRobot() {
             return new HRRobot();
         }
     }, GENERAL {
-        public Class<?>[] getFeasibleTasks(){
+        public Class<?>[] getFeasibleTasks() {
             return new Class<?>[]{};
         }
-        public Robot getRobot(){
+        public Robot getRobot() {
             return new GeneralRobot();
         }
     };
@@ -68,12 +69,12 @@ public enum RobotType {
      * @param task task
      * @return the type of robot capable of performing the specified task
      */
-    public static RobotType identifyRobotType(Task task){
+    public static RobotType identifyRobotType(Task task) {
         Objects.requireNonNull(task, Constants.TASK_IS_NULL);
         RobotType result = RobotType.GENERAL;
-        for(RobotType type : RobotType.values()){
-            for(Class<?> taskClass : type.getFeasibleTasks()){
-                if(taskClass.isInstance(task)){
+        for (RobotType type : RobotType.values()) {
+            for (Class<?> taskClass : type.getFeasibleTasks()) {
+                if (taskClass.isInstance(task)) {
                     result = type;
                     break;
                 }

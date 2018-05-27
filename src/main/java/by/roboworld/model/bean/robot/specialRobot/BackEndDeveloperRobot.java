@@ -4,11 +4,11 @@ import by.roboworld.model.bean.robot.AbstractSpecialRobot;
 import by.roboworld.model.facroty.RobotType;
 
 /**
- * The robot is trained to perform back-end tasks
+ * The robot is trained to perform back-end tasks.
  */
 public class BackEndDeveloperRobot extends AbstractSpecialRobot {
 
-    public RobotType getRobotType(){
+    public RobotType getRobotType() {
         return RobotType.BACK_END_DEVELOPER;
     }
 

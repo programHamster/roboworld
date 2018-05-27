@@ -7,8 +7,8 @@ import javax.websocket.server.ServerEndpointConfig.Configurator;
  */
 public class ChatEndpointConfigurator extends Configurator {
 
-    /** the single endpoint */
-    private static ChatEndpoint chat = new ChatEndpoint();
+    /** The single endpoint. */
+    private static final ChatEndpoint chat = new ChatEndpoint();
 
     /**
      * Returns a single endpoint for all web socket connections.
@@ -20,7 +20,7 @@ public class ChatEndpointConfigurator extends Configurator {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getEndpointInstance(Class<T> endpointClass) {
-        return (T)chat;
+        return (T) chat;
     }
 
 }

@@ -18,18 +18,18 @@ public class SharedBoardTest {
     private static final SharedBoard board = SharedBoard.getInstance();
 
     @Test
-    public void getInstance() throws InterruptedException, ExecutionException {
+    public void getInstance() throws InterruptedException {
         // arrange
         final int NUMBER_THREADS = 5;
         ExecutorService executor = Executors.newFixedThreadPool(NUMBER_THREADS);
-        List<Callable<SharedBoard>> callables = new ArrayList<>(NUMBER_THREADS);
+        List<Callable<SharedBoard>> callableBoards = new ArrayList<>(NUMBER_THREADS);
         final boolean[] result = new boolean[1];
         result[0] = true;
         for(int i=0; i<NUMBER_THREADS; i++){
-            callables.add(SharedBoard::getInstance);
+            callableBoards.add(SharedBoard::getInstance);
         }
         // act
-        List<Future<SharedBoard>> futures = executor.invokeAll(callables);
+        List<Future<SharedBoard>> futures = executor.invokeAll(callableBoards);
         futures.stream().map(future -> {
             SharedBoard sharedBoard = null;
             try {

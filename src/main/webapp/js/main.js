@@ -178,7 +178,7 @@ function createRobotOrTask(name) {
 }
 
 function parseForm(form) {
-    result = parseElement(form, 'input');
+    var result = parseElement(form, 'input');
     var select = parseElement(form, 'select');
     if(result.length > 0 && select.length > 0){
         result += "&" + select;

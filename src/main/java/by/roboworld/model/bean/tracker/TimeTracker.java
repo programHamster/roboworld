@@ -5,13 +5,13 @@ import by.roboworld.exception.Constants;
 import java.util.Timer;
 
 /**
- * This class is used to set the timer in the tracker and allows classes which extends it
- * to schedule the start of control.
+ * This class is used to set the timer in the tracker and allows classes which
+ * extends it to schedule the start of control.
  */
 public abstract class TimeTracker implements Tracker {
-    /** Timer encapsulated in this class */
+    /** Timer encapsulated in this class. */
     private final Timer timer;
-    /** The period for setting up control startup */
+    /** The period for setting up control startup. */
     private long period;
 
     /**
@@ -19,7 +19,7 @@ public abstract class TimeTracker implements Tracker {
      *
      * @param period period for setting up control startup
      */
-    public TimeTracker(long period){
+    public TimeTracker(long period) {
         setPeriod(period);
         timer = new Timer(true);
     }
@@ -27,7 +27,7 @@ public abstract class TimeTracker implements Tracker {
     /**
      * Returns the period with which the {@code control()} will be called.
      *
-     * @return
+     * @return the period with which the {@code control()} will be called
      */
     public long getPeriod() {
         return period;
@@ -37,10 +37,11 @@ public abstract class TimeTracker implements Tracker {
      * Sets the period with which the {@code control()} will be called.
      *
      * @param period period for setting up control startup
-     * @throws IllegalArgumentException if the specified period has a negative or zero value
+     * @throws IllegalArgumentException if the specified period has a negative
+     *                                  or zero value
      */
     public void setPeriod(long period) {
-        if(period <= 0){
+        if (period <= 0) {
             throw new IllegalArgumentException(Constants.PERIOD_IS_NOT_POSITIVE);
         }
         this.period = period;
@@ -51,7 +52,7 @@ public abstract class TimeTracker implements Tracker {
      *
      * @return the timer
      */
-    protected Timer getTimer(){
+    protected Timer getTimer() {
         return timer;
     }
 

@@ -12,7 +12,8 @@ public class TrackerInitiator implements ApplicationContextAware {
     private ApplicationContext appContext;
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException{
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
         appContext = applicationContext;
     }
 
@@ -21,7 +22,7 @@ public class TrackerInitiator implements ApplicationContextAware {
      *
      * @param broadcast a broadcast event
      */
-    public void control(BroadcastEvent broadcast){
+    public void control(BroadcastEvent broadcast) {
         appContext.publishEvent(broadcast);
     }
 

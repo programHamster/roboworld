@@ -47,7 +47,7 @@ public class AbstractRobotTest {
         assertNull(robot.getTask());
     }
 
-    // because waiting for a task from another thread is enabled
+    // because waiting for a TASK from another thread is enabled
     @Test(expected = IllegalMonitorStateException.class)
     public void work_whenRobotHaveNotTask() {
         // arrange
@@ -60,13 +60,13 @@ public class AbstractRobotTest {
 
     @DataPoints
     public static Object[][] forTest_takeSharedTask_robotTaskTypeResult = new Object[][]{
-            // the general robot takes a general task
+            // the general ROBOT takes a general TASK
             {new GeneralRobot(), new DieTask(), RobotType.GENERAL, null},
-            // the general robot don't take a special task
+            // the general ROBOT don't take a special TASK
             {new GeneralRobot(), backEndTask, RobotType.BACK_END_DEVELOPER, backEndTask},
-            // the special robot takes a general task
+            // the special ROBOT takes a general TASK
             {new BackEndDeveloperRobot(), new DieTask(), RobotType.GENERAL, null},
-            // the special robot takes a special task
+            // the special ROBOT takes a special TASK
             {new BackEndDeveloperRobot(), new BackEndTask(), RobotType.BACK_END_DEVELOPER, null}
     };
 
@@ -278,8 +278,8 @@ public class AbstractRobotTest {
         robot.wakeUp();
     }
 
-    // because there is no monitor on a robot lock
-    // only a robot can stop itself
+    // because there is no monitor on a ROBOT lock
+    // only a ROBOT can stop itself
     @Test(expected = IllegalMonitorStateException.class)
     public void await() {
         // arrange
@@ -301,14 +301,14 @@ public class AbstractRobotTest {
     }
 
     private static class TaskFeasibility {
-        private AbstractRobot robot;
-        private Task task;
-        private boolean feasibility;
+        final private AbstractRobot ROBOT;
+        final private Task TASK;
+        final private boolean FEASIBILITY;
 
         private TaskFeasibility(AbstractRobot robot, Task task, boolean feasibility) {
-            this.robot = robot;
-            this.task = task;
-            this.feasibility = feasibility;
+            this.ROBOT = robot;
+            this.TASK = task;
+            this.FEASIBILITY = feasibility;
         }
     }
     @DataPoints
@@ -334,9 +334,9 @@ public class AbstractRobotTest {
     @Theory
     public void checkTaskFeasibility(TaskFeasibility taskFeasibility) {
         // arrange
-        AbstractRobot robot = taskFeasibility.robot;
-        Task task = taskFeasibility.task;
-        boolean feasibility = taskFeasibility.feasibility;
+        AbstractRobot robot = taskFeasibility.ROBOT;
+        Task task = taskFeasibility.TASK;
+        boolean feasibility = taskFeasibility.FEASIBILITY;
         // act
         boolean result = robot.checkTaskFeasibility(task);
         // assert

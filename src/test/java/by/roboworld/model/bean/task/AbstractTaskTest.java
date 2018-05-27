@@ -17,12 +17,12 @@ public class AbstractTaskTest {
         // arrange
         int numberThreads = 5;
         ExecutorService executor = Executors.newFixedThreadPool(numberThreads);
-        List<Callable<Task>> callables = new ArrayList<>(numberThreads);
+        List<Callable<Task>> callableTasks = new ArrayList<>(numberThreads);
         for(int i=0; i<numberThreads; i++){
-            callables.add(BackEndTask::new);
+            callableTasks.add(BackEndTask::new);
         }
         // act
-        List<Future<Task>> futures = executor.invokeAll(callables);
+        List<Future<Task>> futures = executor.invokeAll(callableTasks);
         int[] taskIds = futures.parallelStream().mapToInt(future -> {
             try {
                 return future.get().getId();
