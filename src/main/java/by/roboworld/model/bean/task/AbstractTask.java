@@ -48,7 +48,7 @@ public abstract class AbstractTask implements Task {
      *
      * @param name a new name for the task
      */
-    public void setName(final String name) {
+    public final void setName(final String name) {
         Objects.requireNonNull(name, by.roboworld.exception.Constants.TASK_NAME_IS_NULL);
         this.name = name;
     }

@@ -37,7 +37,7 @@ public class MonitorPerformanceTracker extends TimeTracker {
      * @throws IllegalArgumentException if the specified period has a negative
      *                                  or zero value
      */
-    public MonitorPerformanceTracker(long period) {
+    public MonitorPerformanceTracker(final long period) {
         super(period);
     }
 
@@ -47,7 +47,7 @@ public class MonitorPerformanceTracker extends TimeTracker {
      * @param broadcast a broadcast event
      */
     @Override
-    public void onApplicationEvent(BroadcastEvent broadcast) {
+    public void onApplicationEvent(final BroadcastEvent broadcast) {
         getTimer().purge();
         RobotType type = broadcast.getType();
         MonitorPerformance monitor = new MonitorPerformance(broadcast.getSource(), type);
@@ -61,7 +61,7 @@ public class MonitorPerformanceTracker extends TimeTracker {
      * @param type robot type
      * @param newMonitor new monitor to be installed for the specified type
      */
-    private synchronized void startMonitor(RobotType type, MonitorPerformance newMonitor) {
+    private synchronized void startMonitor(final RobotType type, final MonitorPerformance newMonitor) {
         MonitorPerformance oldMonitor = timerTasks.get(type);
         if (oldMonitor != null) {
             oldMonitor.cancel();
@@ -74,7 +74,7 @@ public class MonitorPerformanceTracker extends TimeTracker {
      * This class extends {@code TimeTask} and implements the test of robot
      * performance.
      */
-    private class MonitorPerformance extends TimerTask {
+    private static class MonitorPerformance extends TimerTask {
         /** Type of robot that is controlled. */
         private final RobotType type;
         /**
@@ -90,7 +90,7 @@ public class MonitorPerformanceTracker extends TimeTracker {
          * @param type the robot type
          * @throws NullPointerException if robot type is null
          */
-        private MonitorPerformance(Operator operator, RobotType type) {
+        private MonitorPerformance(final Operator operator, final RobotType type) {
             Objects.requireNonNull(operator, "Operator is null");
             Objects.requireNonNull(type, Constants.TASK_TYPE_IS_NULL);
             this.operator = operator;

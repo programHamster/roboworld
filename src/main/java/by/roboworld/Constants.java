@@ -8,6 +8,7 @@ public abstract class Constants {
     public static final String PARAM_VALUE_ROBOTS_INIT = "robots";
     public static final String EMPTY = "";
     public static final String DEFAULT_UUID_DELIMITER = "-";
+    public static final String MESSAGE_FOR_EXCEPTION = "The message from the main controller";
     //                    Commands
     public static final String PARAM_NAME_COMMAND = "command";
     public static final String COMMAND_CREATE_ROBOT = "createRobot";

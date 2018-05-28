@@ -60,4 +60,18 @@ public class ImplementationNode implements Comparable<ImplementationNode> {
     public int compareTo(ImplementationNode node) {
         return implementationName.compareTo(node.implementationName);
     }
+
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof ImplementationNode)) {
+            return false;
+        }
+        ImplementationNode node = (ImplementationNode) o;
+        return taskClass == node.taskClass && implementationName.equals(node.implementationName);
+    }
 }

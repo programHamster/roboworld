@@ -25,13 +25,13 @@ public class ChatEndpoint {
 
     @OnOpen
     public void onOpen(Session userSession) {
-        LOGGER.info("Session " + userSession.getId() + " subscribed");
+        LOGGER.info("Session {} subscribed", userSession.getId());
         userSessions.add(userSession);
     }
 
     @OnClose
     public void onClose(Session userSession) {
-        LOGGER.info("Session " + userSession.getId() + " unsubscribed");
+        LOGGER.info("Session {} unsubscribed", userSession.getId());
         userSessions.remove(userSession);
     }
 

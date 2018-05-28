@@ -27,7 +27,7 @@ public abstract class OutputInformation {
      * @param output an output
      * @throws NullPointerException if the specified output is <code>null</code>
      */
-    public static void installOutput(Output output) {
+    public static void installOutput(final Output output) {
         Objects.requireNonNull(output, by.roboworld.exception.Constants.OUTPUT_IS_NULL);
         OutputInformation.output = output;
     }
@@ -37,7 +37,7 @@ public abstract class OutputInformation {
      *
      * @param printStream a PrintStream
      */
-    public static void setOutputStream(OutputStream printStream) {
+    public static void setOutputStream(final OutputStream printStream) {
         Objects.requireNonNull(printStream);
         StreamOutput.setOutputStream(printStream);
     }
@@ -47,7 +47,7 @@ public abstract class OutputInformation {
      *
      * @param writer a Writer
      */
-    public static void setWriter(Writer writer) {
+    public static void setWriter(final Writer writer) {
         Objects.requireNonNull(writer);
         WriterOutput.setWriter(writer);
     }
@@ -58,7 +58,7 @@ public abstract class OutputInformation {
      * @param message message to output
      * @throws UncheckedIOException if the output was closed
      */
-    public static void write(String message) {
+    public static void write(final String message) {
         try {
             output.write(message);
         } catch (IOException e) {
@@ -77,7 +77,7 @@ public abstract class OutputInformation {
      * @throws IllegalArgumentException if the output name is not associated
      *                                  with the output way
      */
-    public static void write(String message, RoboworldEvent event) {
+    public static void write(final String message, final RoboworldEvent event) {
         Objects.requireNonNull(event, by.roboworld.exception.Constants.EVENT_IS_NULL);
         String newMessage = event.name().toLowerCase() + Constants.KEY_DELIMITER + message;
         write(newMessage);

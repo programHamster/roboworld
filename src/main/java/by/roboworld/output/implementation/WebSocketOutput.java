@@ -5,6 +5,7 @@ import by.roboworld.websocket.ChatEndpoint;
 import by.roboworld.websocket.ChatEndpointConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MarkerFactory;
 
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
@@ -26,8 +27,8 @@ public class WebSocketOutput extends Output {
      * @param message the message
      */
     @Override
-    public synchronized void write(String message) {
-        LOGGER.info("writing message : " + message);
+    public synchronized void write(final String message) {
+        LOGGER.info("writing message : {}", message);
         final long timeout = 2000;
         if (!Thread.currentThread().isInterrupted()) {
             for (Session session : chat.getUserSessions()) {
@@ -37,8 +38,8 @@ public class WebSocketOutput extends Output {
                     async.setSendTimeout(timeout);
                     async.sendText(message, result -> {
                         if (!result.isOK()) {
-                            Throwable t = result.getException();
-                            LOGGER.error(t.getMessage(), t);
+                            LOGGER.error("Message \"" + message +
+                                    "\" don't sent", result.getException());
                         }
                     });
                 }

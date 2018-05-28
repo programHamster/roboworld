@@ -32,13 +32,13 @@ public abstract class TaskImplementationFactory {
      * @param implementationName the implementation name
      * @return a implementation class corresponding to the specified name of
      *         the implementation
-     * @throws NullPointerException if the specified implementation name is
-     *                              null or empty
+     * @throws NullPointerException if the specified implementation name is null
+     * @throws IllegalArgumentException if the specified implementation name is empty
      */
-    public Class<?> searchImplementation(String implementationName) {
+    public Class<?> searchImplementation(final String implementationName) {
         Objects.requireNonNull(implementationName, Constants.TASK_IMPLEMENTATION_IS_NULL);
         if (implementationName.trim().isEmpty()) {
-            throw new NullPointerException(Constants.TASK_IMPLEMENTATION_IS_EMPTY);
+            throw new IllegalArgumentException(Constants.TASK_IMPLEMENTATION_IS_EMPTY);
         }
         ImplementationNode[] implementations = getImplementationNodes();
         Arrays.sort(implementations);

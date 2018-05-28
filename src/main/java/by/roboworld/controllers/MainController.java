@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -40,7 +41,7 @@ public class MainController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
     @Autowired
-    public void setOperator(Operator operator) {
+    public void setOperator(final Operator operator) {
         this.operator = operator;
     }
 
@@ -73,8 +74,8 @@ public class MainController {
      *                                       robot
      */
     @PostMapping(value = "/robots")
-    public void createRobot(@RequestParam(Constants.PARAM_NAME_ROBOT_TYPE) String robotTypeName,
-                            @RequestParam(Constants.PARAM_NAME_ROBOT_NAME) String robotName)
+    public void createRobot(@RequestParam(Constants.PARAM_NAME_ROBOT_TYPE) final String robotTypeName,
+                            @RequestParam(Constants.PARAM_NAME_ROBOT_NAME) final String robotName)
             throws UnsupportedRobotTypeException {
         RobotType robotType = RobotTypeFactory.getRobotTypeFromFactory(robotTypeName);
         Robot robot = operator.createRobot(robotType, decodeURIComponent(robotName));
@@ -90,11 +91,11 @@ public class MainController {
      * @throws UnsupportedTaskException if cannot determine the type of task
      */
     @PostMapping(value = "/tasks")
-    public void createTask(@RequestParam(Constants.PARAM_NAME_TASK_TYPE) String taskImplementation,
-                            @RequestParam(Constants.PARAM_NAME_TASK_NAME) String taskName)
+    public void createTask(@RequestParam(Constants.PARAM_NAME_TASK_TYPE) final String taskImplementation,
+                            @RequestParam(Constants.PARAM_NAME_TASK_NAME) final String taskName)
             throws UnsupportedTaskException {
-        taskName = decodeURIComponent(taskName);
-        Task task = TaskFactory.getTaskFromFactory(taskImplementation, taskName);
+        String decodeTaskName = decodeURIComponent(taskName);
+        Task task = TaskFactory.getTaskFromFactory(taskImplementation, decodeTaskName);
         TaskHolder.getInstance().putTask(task);
         OutputInformation.write("Task \"" + task.getName() + "\" created", RoboworldEvent.TASK);
     }
@@ -107,22 +108,22 @@ public class MainController {
      * @param robotName name of robot
      */
     @PostMapping(value = "/assign")
-    public void assignTask(@RequestParam(Constants.PARAM_NAME_TASK_NAME) String taskName,
-                           @RequestParam(Constants.PARAM_NAME_ROBOT_NAME) String robotName) {
-        robotName = decodeURIComponent(robotName);
-        taskName = decodeURIComponent(taskName);
-        Robot robot = operator.get(robotName);
-        Task task = TaskHolder.getInstance().getTask(taskName, robot.getRobotType());
+    public void assignTask(@RequestParam(Constants.PARAM_NAME_TASK_NAME) final String taskName,
+                           @RequestParam(Constants.PARAM_NAME_ROBOT_NAME) final String robotName) {
+        String decodeRobotName = decodeURIComponent(robotName);
+        String decodeTaskName = decodeURIComponent(taskName);
+        Robot robot = operator.get(decodeRobotName);
+        Task task = TaskHolder.getInstance().getTask(decodeTaskName, robot.getRobotType());
         if (task == null) {
-            task = TaskHolder.getInstance().totalSearch(taskName);
+            task = TaskHolder.getInstance().totalSearch(decodeTaskName);
             if (task != null) {
-                throw new TaskNotFeasibleException(robotName, task);
+                throw new TaskNotFeasibleException(decodeRobotName, task);
             } else {
-                throw new TaskNotFoundException(taskName);
+                throw new TaskNotFoundException(decodeTaskName);
             }
         }
         try {
-            operator.assignTask(task, robotName);
+            operator.assignTask(task, decodeRobotName);
         } catch (RobotDeadException e) {
             OutputInformation.write(e.getMessage(), RoboworldEvent.ROBOT);
         }
@@ -138,14 +139,14 @@ public class MainController {
      *                                       robot
      */
     @PostMapping(value = "/broadcast")
-    public void broadcastTask(@RequestParam(Constants.PARAM_NAME_TASK_NAME) String taskName,
-                              @RequestParam(Constants.PARAM_NAME_ROBOT_TYPE) String robotTypeName)
+    public void broadcastTask(@RequestParam(Constants.PARAM_NAME_TASK_NAME) final String taskName,
+                              @RequestParam(Constants.PARAM_NAME_ROBOT_TYPE) final String robotTypeName)
             throws UnsupportedRobotTypeException {
         RobotType robotType = RobotTypeFactory.getRobotTypeFromFactory(robotTypeName);
-        taskName = decodeURIComponent(taskName);
-        Task task = TaskHolder.getInstance().getTask(taskName, robotType);
+        String decodeTaskName = decodeURIComponent(taskName);
+        Task task = TaskHolder.getInstance().getTask(decodeTaskName, robotType);
         if (task == null) {
-            throw new TaskNotFoundException(taskName);
+            throw new TaskNotFoundException(decodeTaskName);
         }
         operator.broadcastTask(task);
     }
@@ -158,8 +159,8 @@ public class MainController {
      * @return response with a message if an error occurs
      */
     @ExceptionHandler({UnsupportedException.class, RuntimeException.class})
-    public ResponseEntity<String> getMessageFromException(Exception ex) {
-        LOGGER.info(ex.getMessage(), ex);
+    public ResponseEntity<String> getMessageFromException(final Exception ex) {
+        LOGGER.info(Constants.MESSAGE_FOR_EXCEPTION, ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -171,13 +172,13 @@ public class MainController {
      * @param str The UTF-8 encoded String to be decoded
      * @return the decoded String
      */
-    private static String decodeURIComponent(String str) {
+    private static String decodeURIComponent(final String str) {
         if (str == null) {
             return null;
         }
         String result;
         try {
-            result = URLDecoder.decode(str, "UTF-8");
+            result = URLDecoder.decode(str, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             // This exception should never occur.
             result = str;

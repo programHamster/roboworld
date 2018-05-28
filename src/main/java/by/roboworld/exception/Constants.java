@@ -19,4 +19,6 @@ public class Constants {
     public static final String IMPLEMENTATION_NAME_IS_NULL = "The implementation name is null";
     public static final String IMPLEMENTATION_CLASS_IS_NULL = "The implementation class is null";
     public static final String WRITER_IS_NULL = "Writer is null";
+    public static final String APPLICATION_CONTEXT_IS_NULL = "ApplicationContext is null";
+    public static final String BROADCAST_EVENT_IS_NULL = "BroadcastEvent is null";
 }

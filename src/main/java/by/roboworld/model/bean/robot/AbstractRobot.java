@@ -42,9 +42,9 @@ public abstract class AbstractRobot implements Robot {
     private boolean isAlive = true;
 
     /**
-     * This is standard constructor initialise the thread of execution
+     * This is standard constructor initialise the thread of execution.
      */
-    public AbstractRobot(){
+    public AbstractRobot() {
         thread = new Thread(this::run);
     }
 
@@ -52,13 +52,13 @@ public abstract class AbstractRobot implements Robot {
      * This method describes a robot's life cycle. The lifecycle of the robot
      * is divided on activation, running, shutdown and dead stages.
      */
-    private void run(){
+    private void run() {
         try {
             // activation stage
             activation();
             // running stage
             isRunning = true;
-            while(!isDie()){
+            while (!isDie()) {
                 work();
             }
         } finally {
@@ -80,8 +80,8 @@ public abstract class AbstractRobot implements Robot {
      *
      * @throws RobotActuationException if the robot is already activated
      */
-    protected void activation(){
-        if(lock.isLocked() || !lock.tryLock()){
+    protected void activation() {
+        if (lock.isLocked() || !lock.tryLock()) {
             throw new RobotActuationException(Constants.ROBOT_IS_ALREADY_ACTIVATED);
         }
     }
@@ -96,14 +96,14 @@ public abstract class AbstractRobot implements Robot {
      */
     protected void work() {
         Task task = pollTask();
-        if(task != null){
+        if (task != null) {
             task.perform();
-            if(!thread.isInterrupted()){
-                OutputInformation.write("The robot \"" + getName() +
-                        "\" completed the task \"" + task.getName() + "\"");
+            if (!thread.isInterrupted()) {
+                OutputInformation.write("The robot \"" + getName()
+                        + "\" completed the task \"" + task.getName() + "\"");
             }
         } else {
-            if(!takeSharedTask()){
+            if (!takeSharedTask()) {
                 await();
             }
         }
@@ -124,7 +124,7 @@ public abstract class AbstractRobot implements Robot {
     protected boolean takeSharedTask() {
         boolean result = false;
         Task task = SharedBoard.getInstance().poll(RobotType.GENERAL);
-        if(task != null){
+        if (task != null) {
             result = addTask(task);
         }
         return result;
@@ -136,9 +136,9 @@ public abstract class AbstractRobot implements Robot {
      * work and is considered dead. When overriding this method, you must call
      * {@code super.shutdown()}.
      */
-    protected void shutdown(){
+    protected void shutdown() {
         tasks = null;
-        if(!thread.isInterrupted()){
+        if (!thread.isInterrupted()) {
             thread.interrupt();
         }
         isRunning = false;
@@ -151,15 +151,15 @@ public abstract class AbstractRobot implements Robot {
      * @throws RobotDeadException if the robot is already dead
      * @throws RobotActuationException if the robot was already started
      */
-    public void start(){
+    public void start() {
         try {
-            if(isAlive){
+            if (isAlive) {
                 thread.start();
             } else {
                 throw new RobotDeadException(this);
             }
         } catch (IllegalThreadStateException e) {
-            throw new RobotActuationException(Constants.ROBOT_IS_ALREADY_ACTIVATED);
+            throw new RobotActuationException(Constants.ROBOT_IS_ALREADY_ACTIVATED, e);
         }
     }
 
@@ -242,7 +242,7 @@ public abstract class AbstractRobot implements Robot {
         checkLife();
         if (lock.tryLock()) {
             try {
-                condition.signal();
+                condition.signalAll();
             } finally {
                 lock.unlock();
             }

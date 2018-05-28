@@ -34,7 +34,8 @@ public abstract class TaskFactory {
      * @return a new task the specified implementation and with the specified
      *         name if name is specified
      * @throws UnsupportedTaskException if task implementation is not found
-     * @throws NullPointerException if task implementation name is null or empty
+     * @throws NullPointerException if task implementation name is null
+     * @throws IllegalArgumentException if task implementation name is empty
      */
     public static Task getTaskFromFactory(String taskImplementation, String taskName)
             throws UnsupportedTaskException {

@@ -19,7 +19,7 @@ public abstract class TimeTracker implements Tracker {
      *
      * @param period period for setting up control startup
      */
-    public TimeTracker(long period) {
+    public TimeTracker(final long period) {
         setPeriod(period);
         timer = new Timer(true);
     }
@@ -40,7 +40,7 @@ public abstract class TimeTracker implements Tracker {
      * @throws IllegalArgumentException if the specified period has a negative
      *                                  or zero value
      */
-    public void setPeriod(long period) {
+    public final void setPeriod(final long period) {
         if (period <= 0) {
             throw new IllegalArgumentException(Constants.PERIOD_IS_NOT_POSITIVE);
         }

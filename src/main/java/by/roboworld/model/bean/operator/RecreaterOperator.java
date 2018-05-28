@@ -70,7 +70,7 @@ public class RecreaterOperator extends AbstractOperator {
      * @throws RobotAlreadyExistException if the robot with the specified name
      *                                 is already under the control of operator
      */
-    public Robot createRobot(RobotType type, String name) {
+    public Robot createRobot(final RobotType type, String name) {
         Robot robot;
         if (name == null || (name = name.trim()).isEmpty()) {
             robot = createRobot(type);
@@ -88,10 +88,14 @@ public class RecreaterOperator extends AbstractOperator {
      * @param type type of the robot
      * @return a new robot
      */
-    public Robot createRobot(RobotType type) {
+    public Robot createRobot(final RobotType type) {
+        String robotName;
+        do {
+            robotName = getRandomName();
+        } while (get(robotName) != null);
         Robot robot;
         try {
-            robot = createRobot(type, getRandomName(), false);
+            robot = createRobot(type, robotName, false);
         } catch (RobotAlreadyExistException e) {
             // if the names matched try again
             robot = createRobot(type);
@@ -119,7 +123,7 @@ public class RecreaterOperator extends AbstractOperator {
      *                             exists and flag <code>withReplacement</code>
      *                             is <code>false</code>
      */
-    private Robot createRobot(RobotType type, String name, boolean withReplacement) {
+    private Robot createRobot(final RobotType type, final String name, final boolean withReplacement) {
         Objects.requireNonNull(type, Constants.ROBOT_TYPE_IS_NULL);
         Robot robot = type.getRobot();
         if (name != null) {

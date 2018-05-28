@@ -32,7 +32,7 @@ public abstract class AbstractSpecialTask extends AbstractTask
             Thread.sleep(performingTime);
         } catch (InterruptedException e) {
             String robotName = Thread.currentThread().getName();
-            throw new TaskNotFeasibleException(robotName, this);
+            throw new TaskNotFeasibleException(robotName, this, e);
         }
     }
 

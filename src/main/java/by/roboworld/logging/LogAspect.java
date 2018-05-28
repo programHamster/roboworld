@@ -28,9 +28,9 @@ public class LogAspect {
 
         StringBuilder message = new StringBuilder();
         message.append(joinPoint.getTarget().getClass().getName());
-        message.append(".");
+        message.append('.');
         message.append(joinPoint.getSignature().getName());
-        message.append("(");
+        message.append('(');
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
             message.append(arg);
@@ -39,7 +39,7 @@ public class LogAspect {
         if (args.length > 0) {
             message.deleteCharAt(message.length() - 2);
         }
-        message.append(")");
+        message.append(')');
         message.append(" execution time ");
         message.append(stopWatch.getTotalTimeMillis());
         message.append(" ms");
