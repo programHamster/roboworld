@@ -99,7 +99,7 @@ public class RecreaterOperatorTest {
         operator.assignTask(task, robot.getName());
         // assert
         // wait until the task started to perform
-        verify(task, timeout(500)).perform();
+        verify(task, timeout(2000)).perform();
     }
 
     @Test
@@ -109,10 +109,11 @@ public class RecreaterOperatorTest {
         for(RobotType type : RobotType.values()){
             Robot robot = operator.createRobot(type);
             Task generalTask = spy(new DieTask());
-            // assert
+            // act
             operator.assignTask(generalTask, robot.getName());
+            // assert
             // waiting for the robot to self-destruct
-            verify(generalTask, timeout(500)).perform();
+            verify(generalTask, timeout(2000)).perform();
         }
     }
 
